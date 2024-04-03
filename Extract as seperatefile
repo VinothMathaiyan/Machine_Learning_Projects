@@ -47,11 +47,14 @@ def extract_excluded_df(df, result_df):
     Returns:
         pandas.DataFrame: A DataFrame containing rows from the original DataFrame excluding those in result_df.
     """
-    # Concatenate the original DataFrame and result_df
-    combined_df = pd.concat([df, result_df])
+    # Merge the DataFrames and identify the rows present in result_df
+    merged_df = df.merge(result_df, how='left', indicator=True)
     
-    # Drop duplicates (i.e., rows present in result_df)
-    excluded_df = combined_df.drop_duplicates(keep=False)
+    # Filter out the rows present in result_df
+    excluded_df = merged_df[merged_df['_merge'] == 'left_only']
+    
+    # Drop the indicator column
+    excluded_df.drop('_merge', axis=1, inplace=True)
     
     return excluded_df
 
@@ -61,3 +64,4 @@ excluded_df = extract_excluded_df(df, result_df)
 
 print("DataFrame excluding rows present in result_df:")
 print(excluded_df)
+
