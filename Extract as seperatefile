@@ -32,3 +32,32 @@ result_df = extract_df_with_unavailable_or_duplicates(df, value_to_search, colum
 
 print("DataFrame containing rows with 'Unavailable' value or duplicate email ids:")
 print(result_df)
+
+
+import pandas as pd
+
+def extract_excluded_df(df, result_df):
+    """
+    Extract another DataFrame by excluding rows that are present in the result_df.
+    
+    Parameters:
+        df (pandas.DataFrame): The original DataFrame.
+        result_df (pandas.DataFrame): The DataFrame containing rows to be excluded.
+        
+    Returns:
+        pandas.DataFrame: A DataFrame containing rows from the original DataFrame excluding those in result_df.
+    """
+    # Concatenate the original DataFrame and result_df
+    combined_df = pd.concat([df, result_df])
+    
+    # Drop duplicates (i.e., rows present in result_df)
+    excluded_df = combined_df.drop_duplicates(keep=False)
+    
+    return excluded_df
+
+# Example usage:
+# Assuming 'df' is your original DataFrame and 'result_df' is the DataFrame containing rows to be excluded
+excluded_df = extract_excluded_df(df, result_df)
+
+print("DataFrame excluding rows present in result_df:")
+print(excluded_df)
