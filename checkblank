@@ -1,0 +1,25 @@
+import pandas as pd
+
+def check_blanks_in_columns(file_path, columns_to_check):
+    # Read the file into a DataFrame
+    df = pd.read_csv(file_path)
+    
+    # Check for blank values in specified columns
+    blank_values = {}
+    for col in columns_to_check:
+        blanks = df[col].isnull().sum()
+        if blanks > 0:
+            blank_values[col] = blanks
+    
+    return blank_values
+
+if __name__ == "__main__":
+    file_path = input("Enter the path to the file: ")
+    columns_to_check = input("Enter the names of the columns to check (comma-separated): ").split(',')
+    blank_columns = check_blanks_in_columns(file_path, columns_to_check)
+    if not blank_columns:
+        print("No blank values found in the specified columns.")
+    else:
+        print("Blank values found in the following columns:")
+        for col, count in blank_columns.items():
+            print(f"{col}: {count} blank values")
