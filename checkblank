@@ -1,30 +1,39 @@
 import pandas as pd
 
-def are_columns_blank(df, column_names):
+def check_columns(df, column_names):
     """
-    Check if specific columns in a DataFrame contain any blank values.
+    Check if specific columns in a DataFrame contain any blank values or duplicates.
     
     Parameters:
         df (pandas.DataFrame): The DataFrame to check.
         column_names (list): A list of column names to check.
         
     Returns:
-        dict: A dictionary where keys are column names and values are True if the column contains
-        blank values, and False otherwise.
+        dict: A dictionary where keys are column names and values are tuples containing
+        information about the column:
+        - The first element of the tuple indicates if the column contains blank values (True/False).
+        - The second element of the tuple indicates if the column contains duplicate values (True/False).
     """
-    blank_columns = {}
+    results = {}
     for column_name in column_names:
-        blank_columns[column_name] = df[column_name].isnull().any()
-    return blank_columns
+        has_blanks = df[column_name].isnull().any()
+        has_duplicates = df.duplicated(subset=[column_name]).any()
+        results[column_name] = (has_blanks, has_duplicates)
+    return results
 
 # Example usage:
 # Assuming 'df' is your DataFrame
 columns_to_check = ['column1', 'column2', 'column3']  # List of column names to check
-blank_columns = are_columns_blank(df, columns_to_check)
+column_results = check_columns(df, columns_to_check)
 
-print("Blank values found in the following columns:")
-for col, is_blank in blank_columns.items():
-    if is_blank:
+print("Results for each column:")
+for col, (has_blanks, has_duplicates) in column_results.items():
+    if has_blanks:
         print(f"{col}: contains blank values")
     else:
         print(f"{col}: does not contain any blank values")
+
+    if has_duplicates:
+        print(f"{col}: contains duplicate values")
+    else:
+        print(f"{col}: does not contain any duplicate values")
