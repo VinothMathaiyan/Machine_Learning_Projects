@@ -13,12 +13,14 @@ def check_columns(df, column_names):
         information about the column:
         - The first element of the tuple indicates if the column contains blank values (True/False).
         - The second element of the tuple indicates if the column contains duplicate values (True/False).
+        - The third element of the tuple contains a list of duplicate values in the column.
     """
     results = {}
     for column_name in column_names:
         has_blanks = df[column_name].isnull().any()
-        has_duplicates = df.duplicated(subset=[column_name]).any()
-        results[column_name] = (has_blanks, has_duplicates)
+        duplicates = df[df.duplicated(subset=[column_name], keep=False)][column_name].tolist()
+        has_duplicates = len(duplicates) > 0
+        results[column_name] = (has_blanks, has_duplicates, duplicates)
     return results
 
 # Example usage:
@@ -27,7 +29,7 @@ columns_to_check = ['column1', 'column2', 'column3']  # List of column names to 
 column_results = check_columns(df, columns_to_check)
 
 print("Results for each column:")
-for col, (has_blanks, has_duplicates) in column_results.items():
+for col, (has_blanks, has_duplicates, duplicates) in column_results.items():
     if has_blanks:
         print(f"{col}: contains blank values")
     else:
@@ -35,5 +37,6 @@ for col, (has_blanks, has_duplicates) in column_results.items():
 
     if has_duplicates:
         print(f"{col}: contains duplicate values")
+        print(f"Duplicates: {duplicates}")
     else:
         print(f"{col}: does not contain any duplicate values")
