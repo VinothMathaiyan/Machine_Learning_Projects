@@ -65,3 +65,51 @@ excluded_df = extract_excluded_df(df, result_df)
 print("DataFrame excluding rows present in result_df:")
 print(excluded_df)
 
+
+import pandas as pd
+import re
+
+def is_email_valid(email):
+    """
+    Validate an email address using a regular expression.
+    
+    Parameters:
+        email (str): The email address to validate.
+        
+    Returns:
+        bool: True if the email is valid, False otherwise.
+    """
+    # Regular expression for validating an Email
+    regex_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    # Match the regex pattern with the email
+    if re.match(regex_pattern, email):
+        return True
+    else:
+        return False
+
+def check_emails(df, email_column):
+    """
+    Check if all emails in a specified column of a DataFrame are valid.
+    
+    Parameters:
+        df (pandas.DataFrame): The DataFrame containing the email column.
+        email_column (str): The name of the column containing email addresses.
+        
+    Returns:
+        bool: True if all emails are valid, False otherwise.
+    """
+    # Apply the email validation function to each email in the column
+    are_valid = df[email_column].apply(is_email_valid)
+    # Return False if any email is not valid, True otherwise
+    return are_valid.all()
+
+# Example usage:
+# Assuming 'df' is your DataFrame and it contains a column named 'email'
+email_column_name = 'email'
+all_emails_valid = check_emails(df, email_column_name)
+
+if all_emails_valid:
+    print("All emails are valid.")
+else:
+    print("Some emails are invalid.")
+
