@@ -1,0 +1,17 @@
+import pandas as pd
+
+def trim_spaces_in_df(df):
+    """
+    Trim leading and trailing spaces in all columns of a DataFrame.
+    
+    Parameters:
+        df (pandas.DataFrame): The DataFrame to trim.
+        
+    Returns:
+        pandas.DataFrame: The trimmed DataFrame.
+    """
+    return df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+
+# Example usage:
+# Assuming 'df' is your DataFrame
+df = trim_spaces_in_df(df)
