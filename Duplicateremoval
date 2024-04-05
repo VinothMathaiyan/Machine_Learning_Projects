@@ -1,0 +1,31 @@
+import pandas as pd
+
+# Sample DataFrame
+data = {'ID': [1, 2, 3, 4, 5],
+        'Level1': ['abc', 'wer', 'abc', 'xyz', 'abc'],
+        'Level1ID': [123, 258, 123, 987, 123],
+        'Level2': ['axy', 'sdfr', 'axy', 'pqr', 'axy'],
+        'Level2ID': [254, 589, 254, 654, 254],
+        'Level3': ['mno', 'uvw', 'mno', 'uvw', 'mno'],
+        'Level3ID': [741, 852, 741, 852, 741]}
+
+df = pd.DataFrame(data)
+
+# Define the number of levels
+num_levels = 3
+
+# Create a dictionary to store subsets based on levels
+level_dfs = {}
+
+# Iterate through each level
+for i in range(1, num_levels + 1):
+    # Select columns for the current level
+    level_cols = [f'Level{i}', f'Level{i}ID']
+    # Create a subset DataFrame for the current level
+    level_dfs[f'Level{i}'] = df[['ID'] + level_cols].rename(columns={f'Level{i}': 'Value', f'Level{i}ID': 'ID'})
+
+# Display the dictionary of DataFrames
+for level, level_df in level_dfs.items():
+    print(f"DataFrame for {level}:")
+    print(level_df)
+    print()
