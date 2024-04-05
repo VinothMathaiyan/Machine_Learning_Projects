@@ -22,10 +22,11 @@ for i in range(1, num_levels + 1):
     # Select columns for the current level
     level_cols = [f'Level{i}', f'Level{i}ID']
     # Create a subset DataFrame for the current level
-    level_dfs[f'Level{i}'] = df[['ID'] + level_cols].rename(columns={f'Level{i}': 'Value', f'Level{i}ID': 'ID'})
+    level_df = df[level_cols].rename(columns={f'Level{i}': 'Value', f'Level{i}ID': 'ID'})
+    # Remove duplicates based on 'Value' and 'ID' columns
+    level_df = level_df.drop_duplicates(subset=['Value', 'ID'])
+    # Add a column for the header
+    level_df['Header'] = f'Level{i}'
+    # Store the subset DataFrame in the dictionary
+    level_dfs[f'Level{i}'] = level_df
 
-# Display the dictionary of DataFrames
-for level, level_df in level_dfs.items():
-    print(f"DataFrame for {level}:")
-    print(level_df)
-    print()
