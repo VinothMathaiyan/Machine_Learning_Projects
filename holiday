@@ -1,0 +1,24 @@
+import holidays
+import pandas as pd
+
+# Function to extract public holidays for a given country code and save them to an Excel file
+def save_holidays_to_excel(country_code, filename):
+    # Initialize the holiday class for the specified country
+    country_holidays = holidays.CountryHoliday(country_code)
+
+    # Create a DataFrame to store the public holidays
+    holidays_df = pd.DataFrame(country_holidays.items(), columns=['Date', 'Holiday'])
+
+    # Save the DataFrame to an Excel file
+    holidays_df.to_excel(filename, index=False)
+
+# Specify the country codes and corresponding file names
+countries = {
+    'US': 'public_holidays_us.xlsx',
+    'GB': 'public_holidays_uk.xlsx',
+    'IN': 'public_holidays_india.xlsx'
+}
+
+# Loop through the countries and save the public holidays to Excel files
+for country_code, filename in countries.items():
+    save_holidays_to_excel(country_code, filename)
