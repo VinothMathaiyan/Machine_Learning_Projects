@@ -1,0 +1,31 @@
+def read_qsf_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        return file.read()
+
+def parse_qsf_content(qsf_content):
+    questions = []
+    lines = qsf_content.split('\n')
+    current_question = None
+
+    for line in lines:
+        if line.startswith("Q:"):
+            current_question = {"Question": line[3:].strip()}
+            questions.append(current_question)
+        elif line.startswith("Choice") or line.startswith("Answer"):
+            if current_question:
+                parts = line.split(",", 1)
+                if len(parts) == 2:
+                    current_question[parts[0]] = parts[1].strip()
+
+    return questions
+
+def main():
+    file_path = "path/to/your/file.qsf"
+    qsf_content = read_qsf_file(file_path)
+    questions = parse_qsf_content(qsf_content)
+
+    # Now you have the questions parsed into a list of dictionaries.
+    # You can further process this data as needed.
+
+if __name__ == "__main__":
+    main()
