@@ -1,0 +1,48 @@
+import pandas as pd
+
+# Read the data from the "Analysis" sheet of your Excel file
+df = pd.read_excel("your_file.xlsx", sheet_name="Analysis")
+
+# 1. Performance Analysis - Average Ratings by Version
+avg_rating_by_version = df.groupby('Version')['Rating'].mean()
+print("Average Rating by Version:")
+print(avg_rating_by_version)
+
+# 2. User Engagement Analysis - Top Performing Content Categories
+top_categories = df.groupby('Taxonomy')['View Count'].sum().sort_values(ascending=False).head(5)
+print("\nTop 5 Performing Content Categories (by View Count):")
+print(top_categories)
+
+# 3. Content Optimization - Identify Underperforming Content
+low_engagement_content = df[ (df['View Count'] < 10) & (df['Helpful Count'] < 5)]
+print("\nPotentially Underperforming Content (low View Count and Helpful Count):")
+print(low_engagement_content[['Short description', 'View Count', 'Helpful Count']])
+
+# 4. User Behavior Analysis - Helpful Count vs Rating Correlation
+helpful_rating_correlation = df['Helpful Count'].corr(df['Rating'])
+print("\nCorrelation between Helpful Count and Rating:", helpful_rating_correlation)
+
+# Note: This script assumes your columns are named exactly as mentioned
+# You can modify the column names and analysis steps based on your specific data
+
+
+1. Performance Analysis:
+
+Content Performance: Analyze view count, helpful count, and ratings together to understand which versions of articles (based on Version field) perform better. This can help identify preferred writing styles, popular content categories (using Taxonomy), and preferred content length.
+Version Comparison: Compare view counts, helpful counts, and ratings between different versions (Version field) of the same article to understand what revisions resonate with the audience.
+2. User Engagement Analysis:
+
+Engagement by Region: Analyze View Count and Helpful Count by Country to see which regions are most engaged with your content. This can help tailor content strategy for specific regions.
+Workflow Impact: Analyze View Count and Helpful Count by Workflow value (Published, Review, Outdated, Draft) to see if workflow stages affect user engagement. This might suggest optimizing workflow efficiency.
+3. Content Optimization:
+
+Identify Underperforming Content: Use view counts and helpful counts to identify articles that might need revamping or refreshing based on low engagement.
+Popular Content Areas: Analyze Taxonomy and View Count/Helpful Count together to see which content categories are most popular. This can help focus content creation efforts.
+4. User Behavior Analysis:
+
+Helpful Count vs Rating Analysis: Analyze the correlation between Helpful Count (thumbs up/down) and Rating (1-5 score) to understand user sentiment. Are high helpful counts always reflected in high ratings?
+Engagement by Time: Analyze View Count and Helpful Count by Published date to see if there are seasonal trends or optimal publishing times.
+Additionally:
+
+Sentiment Analysis (if Short Description allows): You can perform sentiment analysis on the Short Description text to understand the overall tone of the content and reader reception.
+By delving into this data, you can gain valuable insights into user preferences, content performance, and overall content strategy. This can help optimize content creation, improve user engagement, and achieve better results.
