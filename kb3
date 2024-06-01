@@ -1,0 +1,109 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the dataset
+df = pd.read_csv('articles.csv')
+
+# Display the first few rows of the dataframe
+print(df.head())
+
+# Analysis 1: Article Tracking
+article_versions = df.groupby('Number')['Version'].nunique()
+print("Number of versions per article:\n", article_versions)
+
+# Analysis 2: Engagement Trends
+view_trends = df.groupby('Published')['View Count'].sum().reset_index()
+view_trends['Published'] = pd.to_datetime(view_trends['Published'])
+view_trends = view_trends.sort_values(by='Published')
+
+plt.figure(figsize=(10, 6))
+plt.plot(view_trends['Published'], view_trends['View Count'])
+plt.xlabel('Published Date')
+plt.ylabel('Total View Count')
+plt.title('View Count Trends Over Time')
+plt.show()
+
+# Analysis 3: Category Popularity
+category_popularity = df.groupby('Taxonomy')['View Count'].sum().sort_values(ascending=False)
+print("Category Popularity:\n", category_popularity)
+
+plt.figure(figsize=(10, 6))
+sns.barplot(x=category_popularity.index, y=category_popularity.values)
+plt.xlabel('Category')
+plt.ylabel('Total View Count')
+plt.title('Category Popularity')
+plt.xticks(rotation=45)
+plt.show()
+
+# Analysis 4: Regional Preferences
+country_popularity = df.groupby('Country')['View Count'].sum().sort_values(ascending=False)
+print("Country Popularity:\n", country_popularity)
+
+plt.figure(figsize=(10, 6))
+sns.barplot(x=country_popularity.index, y=country_popularity.values)
+plt.xlabel('Country')
+plt.ylabel('Total View Count')
+plt.title('Country Popularity')
+plt.xticks(rotation=45)
+plt.show()
+
+# Analysis 5: Feedback Analysis
+feedback_analysis = df.groupby('Number').agg({'Helpful count': 'sum', 'Rating': 'mean'}).reset_index()
+print("Feedback Analysis:\n", feedback_analysis)
+
+plt.figure(figsize=(10, 6))
+sns.scatterplot(x='Rating', y='Helpful count', data=feedback_analysis)
+plt.xlabel('Average Rating')
+plt.ylabel('Total Helpful Count')
+plt.title('Helpful Count vs Rating')
+plt.show()
+
+# Analysis 6: Workflow Efficiency
+workflow_counts = df['Workflow'].value_counts()
+print("Workflow Status Distribution:\n", workflow_counts)
+
+plt.figure(figsize=(10, 6))
+sns.barplot(x=workflow_counts.index, y=workflow_counts.values)
+plt.xlabel('Workflow Status')
+plt.ylabel('Count of Articles')
+plt.title('Distribution of Articles by Workflow Status')
+plt.show()
+
+# Analysis 7: Predictive Analysis (Simple Example)
+# Predict future views using linear regression (for simplicity)
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+# Convert dates to ordinal for regression
+df['Published'] = pd.to_datetime(df['Published'])
+df['Published_ordinal'] = df['Published'].apply(lambda x: x.toordinal())
+
+# Prepare data
+X = df[['Published_ordinal']]
+y = df['View Count']
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Predict
+predictions = model.predict(X_test)
+
+# Display predictions vs actual
+plt.figure(figsize=(10, 6))
+plt.scatter(X_test, y_test, color='blue', label='Actual')
+plt.scatter(X_test, predictions, color='red', label='Predicted')
+plt.xlabel('Published Date (ordinal)')
+plt.ylabel('View Count')
+plt.title('Actual vs Predicted View Counts')
+plt.legend()
+plt.show()
+
+# Performance
+from sklearn.metrics import mean_squared_error
+mse = mean_squared_error(y_test, predictions)
+print("Mean Squared Error of the model:", mse)
