@@ -1,0 +1,18 @@
+import pandas as pd
+
+# Sample DataFrame
+data = {
+    'ID': ['X12345678', 'G98765432', 'X12345', 'G123456789', 'X87654321', 'A12345678']
+}
+df = pd.DataFrame(data)
+
+# Function to validate ID format
+def is_valid_id(id):
+    # Check if ID starts with 'X' or 'G' and has exactly 9 characters in total (1 letter + 8 digits)
+    return (len(id) == 9) and (id[0] in ['X', 'G']) and id[1:].isdigit()
+
+# Validate IDs and collect errors
+error_ids = df[~df['ID'].apply(is_valid_id)]['ID'].tolist()
+
+# Print the list of error IDs
+print("Error IDs:", error_ids)
