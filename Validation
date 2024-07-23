@@ -1,18 +1,25 @@
 import pandas as pd
 
-# Sample DataFrame
+# Sample DataFrame with UserNames
 data = {
-    'ID': ['X12345678', 'G98765432', 'X12345', 'G123456789', 'X87654321', 'A12345678']
+    'UserName': ['X12345678#Name', 'G98765432#Name', 'X12345#Name', 'G123456789#Name', 'X87654321#Name', 'A12345678#Name']
 }
 df = pd.DataFrame(data)
 
-# Function to validate ID format
-def is_valid_id(id):
-    # Check if ID starts with 'X' or 'G' and has exactly 9 characters in total (1 letter + 8 digits)
-    return (len(id) == 9) and (id[0] in ['X', 'G']) and id[1:].isdigit()
+# Function to validate UserName format
+def is_valid_username(username):
+    # Check if username ends with '#Name'
+    if not username.endswith('#Name'):
+        return False
+    # Check if the part before '#Name' is a valid ID (first letter X or G followed by 8 digits)
+    id_part = username[:-5]  # Remove '#Name' part
+    return (len(id_part) == 9) and (id_part[0] in ['X', 'G']) and id_part[1:].isdigit()
 
-# Validate IDs and collect errors
-error_ids = df[~df['ID'].apply(is_valid_id)]['ID'].tolist()
+# Validate and collect error UserNames
+error_usernames = []
+for username in df['UserName']:
+    if not is_valid_username(username):
+        error_usernames.append(username)
 
-# Print the list of error IDs
-print("Error IDs:", error_ids)
+# Print the list of error UserNames
+print("Error UserNames:", error_usernames)
