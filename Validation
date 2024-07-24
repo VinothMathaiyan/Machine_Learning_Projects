@@ -1,26 +1,37 @@
 import pandas as pd
+import re
 
-def find_duplicate_id_indices(df, id_column):
-  """Finds indices of duplicate IDs in a DataFrame.
+def validate_email(email):
+  """Validates an email address using regular expression.
+
+  Args:
+    email: The email address to validate.
+
+  Returns:
+    True if the email is valid, False otherwise.
+  """
+  regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+  return re.match(regex, email) is not None
+
+def find_invalid_email_indices(df, email_column):
+  """Finds indices of rows with invalid email addresses.
 
   Args:
     df: The pandas DataFrame.
-    id_column: The name of the ID column.
+    email_column: The name of the email column.
 
   Returns:
-    A list of indices corresponding to duplicate IDs.
+    A list of indices of rows with invalid email addresses.
   """
 
-  duplicate_indices = df[df[id_column].duplicated(keep=False)].index.tolist()
-  return duplicate_indices
+  invalid_email_indices = df[~df[email_column].apply(validate_email)].index.tolist()
+  return invalid_email_indices
 
 # Sample DataFrame
-data = {'ID': ['G12345', 'G67890', 'G12345', 'G98765'],
-        'DateOfBirth': ['24/09/1974', '15/12/1980', '24/09/1974', '01/01/2000'],
-        'Access': ['G1234524091974', 'G6789015121980', 'G1234524091974', 'G9876501012000']}
+data = {'Email': ['john.doe@example.com', 'invalid_email', 'jane.smith@company.net']}
 df = pd.DataFrame(data)
 
-id_column = 'ID'
+email_column = 'Email'
 
-duplicate_indices = find_duplicate_id_indices(df, id_column)
-print("Duplicate ID indices:", duplicate_indices)
+invalid_indices = find_invalid_email_indices(df, email_column)
+print("Invalid email indices:", invalid_indices)
