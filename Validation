@@ -1,25 +1,25 @@
 import pandas as pd
 
-# Sample DataFrame with UserNames
-data = {
-    'UserName': ['X12345678#Name', 'G98765432#Name', 'X12345#Name', 'G123456789#Name', 'X87654321#Name', 'A12345678#Name']
-}
+def validate_column(df, column_name, allowed_values):
+  """Validates a column for values not in the allowed list.
+
+  Args:
+    df: The pandas DataFrame.
+    column_name: The name of the column to validate.
+    allowed_values: A list of allowed values.
+
+  Returns:
+    A list of indices where the column value is not in the allowed list.
+  """
+
+  error_indices = df[~df[column_name].isin(allowed_values)].index.tolist()
+  return error_indices
+
+# Sample DataFrame
+data = {'Grade': ['VP', 'AVP', 'MD', 'Manager', 'Director']}
 df = pd.DataFrame(data)
 
-# Function to validate UserName format
-def is_valid_username(username):
-    # Check if username ends with '#Name'
-    if not username.endswith('#Name'):
-        return False
-    # Check if the part before '#Name' is a valid ID (first letter X or G followed by 8 digits)
-    id_part = username[:-5]  # Remove '#Name' part
-    return (len(id_part) == 9) and (id_part[0] in ['X', 'G']) and id_part[1:].isdigit()
+allowed_grades = ['VP', 'AVP', 'MD']
+error1 = validate_column(df, 'Grade', allowed_grades)
 
-# Validate and collect error UserNames
-error_usernames = []
-for username in df['UserName']:
-    if not is_valid_username(username):
-        error_usernames.append(username)
-
-# Print the list of error UserNames
-print("Error UserNames:", error_usernames)
+print("Error 1:", error1)
