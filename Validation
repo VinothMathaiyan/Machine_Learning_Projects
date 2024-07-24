@@ -10,16 +10,18 @@ def validate_access(df, id_column, date_of_birth_column, access_column):
     access_column: The name of the Access column.
 
   Returns:
-    A list of tuples containing the row index and the error message for invalid Access values.
+    The modified DataFrame with an additional column 'AccessError' indicating errors.
   """
 
   df[date_of_birth_column] = pd.to_datetime(df[date_of_birth_column], format='%d/%m/%Y')
   df['Access_Calculated'] = df[id_column].astype(str) + df[date_of_birth_column].dt.strftime('%d%m%Y')
-  errors = []
+  df['AccessError'] = ''
+
   for index, row in df.iterrows():
     if row[access_column] != row['Access_Calculated']:
-      errors.append((index, f"Access mismatch at row {index + 1}: Expected {row['Access_Calculated']}, found {row['Access']}"))
-  return errors
+      df.at[index, 'AccessError'] = f"Access mismatch: Expected {row['Access_Calculated']}, found {row['Access']}"
+
+  return df
 
 # Sample DataFrame
 data = {'ID': ['G12345', 'G67890'],
@@ -31,10 +33,5 @@ id_column = 'ID'
 date_of_birth_column = 'DateOfBirth'
 access_column = 'Access'
 
-errors = validate_access(df, id_column, date_of_birth_column, access_column)
-if errors:
-  print("Errors found:")
-  for error in errors:
-    print(error)
-else:
-  print("No errors found.")
+df_with_errors = validate_access(df, id_column, date_of_birth_column, access_column)
+print(df_with_errors)
