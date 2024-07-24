@@ -1,18 +1,20 @@
 import pandas as pd
 
-def split_dataframe(df, id_column):
-  """Splits a DataFrame into two files based on duplicate IDs.
+def split_to_sheets(df, id_column, file_path):
+  """Splits a DataFrame into different sheets of an Excel file based on duplicate IDs.
 
   Args:
     df: The pandas DataFrame.
     id_column: The name of the ID column.
+    file_path: The path to save the Excel file.
   """
 
   duplicates_df = df[df[id_column].duplicated(keep=False)]
   unique_df = df[~df[id_column].duplicated()]
 
-  duplicates_df.to_excel('duplicates.xlsx', index=False)
-  unique_df.to_excel('unique.xlsx', index=False)
+  with pd.ExcelWriter(file_path) as writer:
+    duplicates_df.to_excel(writer, sheet_name='Duplicates', index=False)
+    unique_df.to_excel(writer, sheet_name='Unique', index=False)
 
 # Sample DataFrame
 data = {'ID': ['G12345', 'G67890', 'G12345', 'G98765'],
@@ -21,5 +23,6 @@ data = {'ID': ['G12345', 'G67890', 'G12345', 'G98765'],
 df = pd.DataFrame(data)
 
 id_column = 'ID'
+file_path = 'output.xlsx'
 
-split_dataframe(df, id_column)
+split_to_sheets(df, id_column, file_path)
