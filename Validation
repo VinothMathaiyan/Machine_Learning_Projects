@@ -1,12 +1,13 @@
 import pandas as pd
 
-def validate_access(df, date_of_birth_column, access_column):
+def validate_access(df, date_of_birth_column, access_column, key_column):
   """Validates the Access column based on ID and DateOfBirth.
 
   Args:
     df: The pandas DataFrame with ID as the index.
     date_of_birth_column: The name of the DateOfBirth column.
     access_column: The name of the Access column.
+    key_column: The name of the key column.
 
   Returns:
     A list of indices where Access is invalid.
@@ -14,19 +15,22 @@ def validate_access(df, date_of_birth_column, access_column):
 
   df[date_of_birth_column] = pd.to_datetime(df[date_of_birth_column], format='%d/%m/%Y')
   df['Access_Calculated'] = df.index.astype(str) + df[date_of_birth_column].dt.strftime('%d%m%Y')
+  df['Key_Calculated'] = df.index.astype(str) + df[date_of_birth_column].dt.strftime('%y')
 
-  error_indices = df[df[access_column] != df['Access_Calculated']].index.tolist()
+  error_indices = df[(df[access_column] != df['Access_Calculated']) | (df[key_column] != df['Key_Calculated'])].index.tolist()
   return error_indices
 
 # Sample DataFrame
 data = {'ID': ['G12345', 'G67890'],
         'DateOfBirth': ['24/09/1974', '15/12/1980'],
-        'Access': ['G1234524091974', 'G6789015121980']}
+        'Access': ['G1234524091974', 'G6789015121980'],
+        'Key': ['G1234594', 'G6789080']}
 df = pd.DataFrame(data)
 df.set_index('ID', inplace=True)
 
 date_of_birth_column = 'DateOfBirth'
 access_column = 'Access'
+key_column = 'Key'
 
-error_indices = validate_access(df, date_of_birth_column, access_column)
+error_indices = validate_access(df, date_of_birth_column, access_column, key_column)
 print(error_indices)
