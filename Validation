@@ -1,20 +1,23 @@
 import pandas as pd
 
-def validate_access(df):
+def validate_access(df, id_column, date_of_birth_column, access_column):
   """Validates the Access column based on ID and DateOfBirth.
 
   Args:
     df: The pandas DataFrame.
+    id_column: The name of the ID column.
+    date_of_birth_column: The name of the DateOfBirth column.
+    access_column: The name of the Access column.
 
   Returns:
     A list of tuples containing the row index and the error message for invalid Access values.
   """
 
-  df['DateOfBirth'] = pd.to_datetime(df['DateOfBirth'], format='%d/%m/%Y')
-  df['Access_Calculated'] = df['ID'].astype(str) + df['DateOfBirth'].dt.strftime('%d%m%Y')
+  df[date_of_birth_column] = pd.to_datetime(df[date_of_birth_column], format='%d/%m/%Y')
+  df['Access_Calculated'] = df[id_column].astype(str) + df[date_of_birth_column].dt.strftime('%d%m%Y')
   errors = []
   for index, row in df.iterrows():
-    if row['Access'] != row['Access_Calculated']:
+    if row[access_column] != row['Access_Calculated']:
       errors.append((index, f"Access mismatch at row {index + 1}: Expected {row['Access_Calculated']}, found {row['Access']}"))
   return errors
 
@@ -24,7 +27,11 @@ data = {'ID': ['G12345', 'G67890'],
         'Access': ['G1234524091974', 'G6789015121980']}
 df = pd.DataFrame(data)
 
-errors = validate_access(df)
+id_column = 'ID'
+date_of_birth_column = 'DateOfBirth'
+access_column = 'Access'
+
+errors = validate_access(df, id_column, date_of_birth_column, access_column)
 if errors:
   print("Errors found:")
   for error in errors:
