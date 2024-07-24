@@ -1,18 +1,18 @@
 import pandas as pd
 
-def find_duplicate_ids(df, id_column):
-  """Finds duplicate IDs in a DataFrame.
+def find_duplicate_id_indices(df, id_column):
+  """Finds indices of duplicate IDs in a DataFrame.
 
   Args:
     df: The pandas DataFrame.
     id_column: The name of the ID column.
 
   Returns:
-    A list of duplicate IDs.
+    A list of indices corresponding to duplicate IDs.
   """
 
-  duplicate_ids = df[id_column].duplicated().index[df[id_column].duplicated()].tolist()
-  return duplicate_ids
+  duplicate_indices = df[df[id_column].duplicated(keep=False)].index.tolist()
+  return duplicate_indices
 
 # Sample DataFrame
 data = {'ID': ['G12345', 'G67890', 'G12345', 'G98765'],
@@ -22,5 +22,5 @@ df = pd.DataFrame(data)
 
 id_column = 'ID'
 
-duplicate_ids = find_duplicate_ids(df, id_column)
-print("Duplicate IDs:", duplicate_ids)
+duplicate_indices = find_duplicate_id_indices(df, id_column)
+print("Duplicate ID indices:", duplicate_indices)
