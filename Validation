@@ -1,36 +1,22 @@
 import pandas as pd
-import re
 
-def validate_email(email):
-  """Validates an email address using regular expression.
-
-  Args:
-    email: The email address to validate.
-
-  Returns:
-    True if the email is valid, False otherwise.
-  """
-  regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-  return re.match(regex, email) is not None
-
-def extract_domains(df, email_column):
-  """Extracts domain names from a DataFrame column.
+def find_blank_rows(df):
+  """Finds rows with all blank values in a DataFrame.
 
   Args:
     df: The pandas DataFrame.
-    email_column: The name of the email column.
 
   Returns:
-    A list of valid domain names.
+    A list of row indices where all values are blank.
   """
-  valid_emails = df[df[email_column].apply(validate_email)]
-  domains = valid_emails[email_column].str.split('@').str[1].tolist()
-  return domains
+
+  blank_rows = df[df.isnull().all(axis=1)].index.tolist()
+  return blank_rows
 
 # Sample DataFrame
-data = {'Email': ['john.doe@example.com', 'invalid_email', 'jane.smith@company.net']}
+data = {'Column1': [1, '', 3, '', 5],
+        'Column2': ['', 2, '', 4, '']}
 df = pd.DataFrame(data)
 
-# Extract domains from valid emails
-domain_list = extract_domains(df, 'Email')
-print(domain_list)
+blank_row_indices = find_blank_rows(df)
+print("Blank row indices:", blank_row_indices)
