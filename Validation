@@ -1,5 +1,25 @@
-There are several data quality issues identified within the [System Name] database that require immediate attention:
+import pandas as pd
 
-Duplicate IDs: Multiple records are found with identical ID values. This inconsistency can lead to inaccurate reporting and analysis.
-Duplicate Emails: There are instances of duplicate email addresses across different records, which can cause issues with communication and identification of employees.
-Incorrect Length of Service: The Length of Service data for certain employees is inaccurate, leading to potential discrepancies in benefits, performance evaluations, and other HR-related processes.
+def split_dataframe(df, id_column):
+  """Splits a DataFrame into two files based on duplicate IDs.
+
+  Args:
+    df: The pandas DataFrame.
+    id_column: The name of the ID column.
+  """
+
+  duplicates_df = df[df[id_column].duplicated(keep=False)]
+  unique_df = df[~df[id_column].duplicated()]
+
+  duplicates_df.to_excel('duplicates.xlsx', index=False)
+  unique_df.to_excel('unique.xlsx', index=False)
+
+# Sample DataFrame
+data = {'ID': ['G12345', 'G67890', 'G12345', 'G98765'],
+        'DateOfBirth': ['24/09/1974', '15/12/1980', '24/09/1974', '01/01/2000'],
+        'Access': ['G1234524091974', 'G6789015121980', 'G1234524091974', 'G9876501012000']}
+df = pd.DataFrame(data)
+
+id_column = 'ID'
+
+split_dataframe(df, id_column)
