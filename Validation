@@ -1,25 +1,36 @@
 import pandas as pd
+import re
 
-def validate_column(df, column_name, allowed_values):
-  """Validates a column for values not in the allowed list.
+def validate_email(email):
+  """Validates an email address using regular expression.
+
+  Args:
+    email: The email address to validate.
+
+  Returns:
+    True if the email is valid, False otherwise.
+  """
+  regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+  return re.match(regex, email) is not None
+
+def extract_domains(df, email_column):
+  """Extracts domain names from a DataFrame column.
 
   Args:
     df: The pandas DataFrame.
-    column_name: The name of the column to validate.
-    allowed_values: A list of allowed values.
+    email_column: The name of the email column.
 
   Returns:
-    A list of indices where the column value is not in the allowed list.
+    A list of valid domain names.
   """
-
-  error_indices = df[~df[column_name].isin(allowed_values)].index.tolist()
-  return error_indices
+  valid_emails = df[df[email_column].apply(validate_email)]
+  domains = valid_emails[email_column].str.split('@').str[1].tolist()
+  return domains
 
 # Sample DataFrame
-data = {'Grade': ['VP', 'AVP', 'MD', 'Manager', 'Director']}
+data = {'Email': ['john.doe@example.com', 'invalid_email', 'jane.smith@company.net']}
 df = pd.DataFrame(data)
 
-allowed_grades = ['VP', 'AVP', 'MD']
-error1 = validate_column(df, 'Grade', allowed_grades)
-
-print("Error 1:", error1)
+# Extract domains from valid emails
+domain_list = extract_domains(df, 'Email')
+print(domain_list)
