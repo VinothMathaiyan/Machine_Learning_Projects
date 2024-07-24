@@ -1,31 +1,18 @@
 import pandas as pd
-import re
 
-def validate_email(email):
-  """Validates an email address using regular expression.
-
-  Args:
-    email: The email address to validate.
-
-  Returns:
-    True if the email is valid, False otherwise.
-  """
-  regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-  return re.match(regex, email) is not None
-
-def find_invalid_email_indices(df, email_column):
-  """Finds indices of rows with invalid email addresses.
+def extract_domains(df, email_column):
+  """Extracts domains from a DataFrame column.
 
   Args:
     df: The pandas DataFrame.
     email_column: The name of the email column.
 
   Returns:
-    A list of indices of rows with invalid email addresses.
+    A list of domain names.
   """
 
-  invalid_email_indices = df[~df[email_column].apply(validate_email)].index.tolist()
-  return invalid_email_indices
+  domains = df[email_column].str.split('@').str[1].tolist()
+  return domains
 
 # Sample DataFrame
 data = {'Email': ['john.doe@example.com', 'invalid_email', 'jane.smith@company.net']}
@@ -33,5 +20,5 @@ df = pd.DataFrame(data)
 
 email_column = 'Email'
 
-invalid_indices = find_invalid_email_indices(df, email_column)
-print("Invalid email indices:", invalid_indices)
+domain_list = extract_domains(df, email_column)
+print(domain_list)
