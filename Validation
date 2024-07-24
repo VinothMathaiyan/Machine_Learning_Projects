@@ -1,35 +1,26 @@
 import pandas as pd
 
-def validate_access(df, id_column, date_of_birth_column, access_column):
-  """Validates the Access column based on ID and DateOfBirth.
+def find_duplicate_ids(df, id_column):
+  """Finds duplicate IDs in a DataFrame.
 
   Args:
     df: The pandas DataFrame.
     id_column: The name of the ID column.
-    date_of_birth_column: The name of the DateOfBirth column.
-    access_column: The name of the Access column.
 
   Returns:
-    A DataFrame containing only rows with Access errors.
+    A list of duplicate IDs.
   """
 
-  df[date_of_birth_column] = pd.to_datetime(df[date_of_birth_column], format='%d/%m/%Y')
-  df['Access_Calculated'] = df[id_column].astype(str) + df[date_of_birth_column].dt.strftime('%d%m%Y')
-
-  error_df = df[df[access_column] != df['Access_Calculated']]
-  error_df['AccessError'] = error_df.apply(lambda row: f"Access mismatch: Expected {row['Access_Calculated']}, found {row['Access']}", axis=1)
-
-  return error_df
+  duplicate_ids = df[id_column].duplicated().index[df[id_column].duplicated()].tolist()
+  return duplicate_ids
 
 # Sample DataFrame
-data = {'ID': ['G12345', 'G67890'],
-        'DateOfBirth': ['24/09/1974', '15/12/1980'],
-        'Access': ['G1234524091974', 'G6789015121980']}
+data = {'ID': ['G12345', 'G67890', 'G12345', 'G98765'],
+        'DateOfBirth': ['24/09/1974', '15/12/1980', '24/09/1974', '01/01/2000'],
+        'Access': ['G1234524091974', 'G6789015121980', 'G1234524091974', 'G9876501012000']}
 df = pd.DataFrame(data)
 
 id_column = 'ID'
-date_of_birth_column = 'DateOfBirth'
-access_column = 'Access'
 
-error_df = validate_access(df, id_column, date_of_birth_column, access_column)
-print(error_df)
+duplicate_ids = find_duplicate_ids(df, id_column)
+print("Duplicate IDs:", duplicate_ids)
