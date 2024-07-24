@@ -1,23 +1,5 @@
-import pandas as pd
-import re
+There are several data quality issues identified within the [System Name] database that require immediate attention:
 
-def validate_email(email):
-  """Validates an email address using regular expression.
-
-  Args:
-    email: The email address to validate.
-
-  Returns:
-    True if the email is valid (excluding emails with dots in username), False otherwise.
-  """
-  regex = r'^[a-zA-Z0-9!#$%&\'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-  return re.match(regex, email) is not None
-
-# Sample DataFrame
-data = {'Email': ['john.doe@example.com', 'invalid_email', 'jane.smith@company.net', "o'brien@example.com"]}
-df = pd.DataFrame(data)
-
-# Extract domains from valid emails
-valid_emails = df[df['Email'].apply(validate_email)]
-domain_list = extract_domains(valid_emails, 'Email')
-print(domain_list)
+Duplicate IDs: Multiple records are found with identical ID values. This inconsistency can lead to inaccurate reporting and analysis.
+Duplicate Emails: There are instances of duplicate email addresses across different records, which can cause issues with communication and identification of employees.
+Incorrect Length of Service: The Length of Service data for certain employees is inaccurate, leading to potential discrepancies in benefits, performance evaluations, and other HR-related processes.
