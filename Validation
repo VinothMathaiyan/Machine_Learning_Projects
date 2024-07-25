@@ -1,44 +1,24 @@
 import pandas as pd
-import re
 
-def validate_id(df, column_name='ID'):
-  """Validates IDs in a DataFrame.
-
-  Args:
-    df: The pandas DataFrame.
-    column_name: The name of the column to validate.
-
-  Returns:
-    A pandas Series indicating the validity of each ID.
-  """
-
-  valid_id_pattern = r'^[a-zA-Z]\d{8}$'
-  return df[column_name].str.match(valid_id_pattern).fillna(False)
-
-def validate_email(df, column_name='Email'):
-  """Validates email addresses in a DataFrame.
-
-  Args:
-    df: The pandas DataFrame.
-    column_name: The name of the column to validate.
-
-  Returns:
-    A pandas Series indicating the validity of each email.
-  """
-
-  email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-  return df[column_name].str.match(email_regex).fillna(False)
-
-def validate_dataframe(df):
-  """Validates IDs and emails in a DataFrame and creates 'ID_valid' and 'Email_valid' columns.
+def extract_valid_rows(df):
+  """Extracts rows where either ID_valid or Email_valid is True and checks for email duplicates.
 
   Args:
     df: The pandas DataFrame.
 
   Returns:
-    The DataFrame with added 'ID_valid' and 'Email_valid' columns.
+    A pandas DataFrame with valid rows and a flag for duplicate emails.
   """
 
-  df['ID_valid'] = validate_id(df, 'ID')
-  df['Email_valid'] = validate_email(df, 'Email')
-  return df
+  # Filter rows where either ID_valid or Email_valid is True
+  valid_df = df[(df['ID_valid'] == True) | (df['Email_valid'] == True)]
+
+  # Check for duplicate emails
+  valid_df['duplicate_email'] = valid_df['Email'].duplicated(keep='first')
+
+  return valid_df
+
+# Example usage:
+# Assuming you have a DataFrame named df with columns 'ID', 'Email', 'ID_valid', and 'Email_valid'
+valid_data = extract_valid_rows(df)
+print(valid_data)
