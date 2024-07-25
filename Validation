@@ -1,29 +1,33 @@
 import pandas as pd
 
-def validate_fields(df, field1, field2):
+def validate_fields(df, field1, field2, unavailable_values):
   """Validates fields based on specified conditions.
 
   Args:
     df: The pandas DataFrame.
-    field1: The name of the first field.
-    field2: The name of the second field.
+    field1: The name of the first field (DateOfBirth).
+    field2: The name of the second field (AgeRange).
+    unavailable_values: A list of acceptable values for missing DateOfBirth.
 
   Returns:
     A tuple containing a list of error indices and the number of errors.
   """
 
-  errors = df[(df[field1].isna()) & (~df[field2].isna())].index.tolist()
+  error_df = df[(df[field1].isna()) & (~df[field2].isin(unavailable_values))]
+  error_df['Error Message'] = f"{field1} is missing while {field2} has a valid value"
+  errors = error_df.index.tolist()
   errors_length = len(errors)
-  return errors, errors_length
+  return error_df, errors_length
 
 # Sample DataFrame
-data = {'LengthOfServiceStartDate': [pd.NaT, '2022-01-01', pd.NaT],
-        'LengthOfServiceRange': [5, 3, 2]}
+data = {'DateOfBirth': [pd.NaT, '2000-01-01', pd.NaT],
+        'AgeRange': ['Unavailable', '20-30', 'Not Applicable']}
 df = pd.DataFrame(data)
 
-field1 = 'LengthOfServiceStartDate'
-field2 = 'LengthOfServiceRange'
+field1 = 'DateOfBirth'
+field2 = 'AgeRange'
+unavailable_values = ['Unavailable', 'Not Applicable']
 
-error_indices, errors_count = validate_fields(df, field1, field2)
-print("Error indices:", error_indices)
+error_df, errors_count = validate_fields(df, field1, field2, unavailable_values)
+print(error_df)
 print("Number of errors:", errors_count)
