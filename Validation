@@ -1,20 +1,24 @@
 import pandas as pd
-import numpy as np
 
-# Sample DataFrame
-data = {'ID': ['A12345678', 'B9876543', 'C1234567', 'D123456789', 'EABC1234']}
-df = pd.DataFrame(data)
+def check_duplicate(df, column_name='BRID'):
+  """Checks for duplicate values in a specified column of a DataFrame.
 
-# Create a boolean array with potential missing values
-valid_id_pattern = r'^[a-zA-Z]\d{8}$'
-boolean_array = df['ID'].str.match(valid_id_pattern)
+  Args:
+    df: The pandas DataFrame.
+    column_name: The name of the column to check for duplicates.
 
-# Handle missing values
-boolean_array = boolean_array.fillna(False)
+  Returns:
+    A list of duplicate values.
+  """
 
-# Create valid and invalid DataFrames
-valid_df = df[boolean_array]
-invalid_df = df[~boolean_array]
+  duplicates = df[df.duplicated(subset=[column_name])][column_name].tolist()
+  return duplicates
 
-print(valid_df)
-print(invalid_df)
+# Example usage:
+# Assuming valid_ids is your DataFrame with valid IDs
+duplicate_brids = check_duplicate(valid_ids)
+
+if duplicate_brids:
+  print("Duplicate BRID values found:", duplicate_brids)
+else:
+  print("No duplicate BRID values found.")
