@@ -1,55 +1,20 @@
 import pandas as pd
-import re
-
-def validate_ids(df, column_name):
-  """
-  Validates IDs in a DataFrame column.
-
-  Args:
-    df: The pandas DataFrame.
-    column_name: The name of the column to validate.
-
-  Returns:
-    A tuple of four values:
-      - Total number of rows in the original DataFrame.
-      - Number of valid rows.
-      - Number of invalid rows.
-      - DataFrames for valid and invalid IDs.
-  """
-
-  # Regular expression to match valid IDs
-  valid_id_pattern = r'^[a-zA-Z]\d{8}$'
-
-  # Create a new column indicating validity
-  df['valid'] = df[column_name].str.match(valid_id_pattern)
-
-  # Calculate counts
-  total_rows = len(df)
-  valid_rows = df['valid'].sum()
-  invalid_rows = total_rows - valid_rows
-
-  # Split the DataFrame into valid and invalid
-  valid_df = df[df['valid']]
-  invalid_df = df[~df['valid']]
-
-  # Drop the 'valid' column from both DataFrames
-  valid_df = valid_df.drop('valid', axis=1)
-  invalid_df = invalid_df.drop('valid', axis=1)
-
-  return total_rows, valid_rows, invalid_rows, valid_df, invalid_df
+import numpy as np
 
 # Sample DataFrame
 data = {'ID': ['A12345678', 'B9876543', 'C1234567', 'D123456789', 'EABC1234']}
 df = pd.DataFrame(data)
 
-total, valid, invalid, valid_ids, invalid_ids = validate_ids(df, 'ID')
+# Create a boolean array with potential missing values
+valid_id_pattern = r'^[a-zA-Z]\d{8}$'
+boolean_array = df['ID'].str.match(valid_id_pattern)
 
-print(f"Total number of rows in the original file: {total}")
-print(f"Number of valid rows: {valid}")
-print(f"Number of invalid rows: {invalid}")
+# Handle missing values
+boolean_array = boolean_array.fillna(False)
 
-print("\nValid IDs:")
-print(valid_ids)
+# Create valid and invalid DataFrames
+valid_df = df[boolean_array]
+invalid_df = df[~boolean_array]
 
-print("\nInvalid IDs:")
-print(invalid_ids)
+print(valid_df)
+print(invalid_df)
