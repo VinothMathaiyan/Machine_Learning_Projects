@@ -1,5 +1,4 @@
 import pandas as pd
-import re
 
 def validate_ids(df, column_name):
   """
@@ -10,7 +9,10 @@ def validate_ids(df, column_name):
     column_name: The name of the column to validate.
 
   Returns:
-    A tuple of two DataFrames: valid and invalid IDs.
+    A tuple of three values:
+      - Total number of rows in the original DataFrame.
+      - Number of valid rows.
+      - Number of invalid rows.
   """
 
   # Regular expression to match valid IDs
@@ -19,24 +21,19 @@ def validate_ids(df, column_name):
   # Create a new column indicating validity
   df['valid'] = df[column_name].str.match(valid_id_pattern)
 
-  # Split the DataFrame into valid and invalid
-  valid_df = df[df['valid']]
-  invalid_df = df[~df['valid']]
+  # Calculate counts
+  total_rows = len(df)
+  valid_rows = df['valid'].sum()
+  invalid_rows = total_rows - valid_rows
 
-  # Drop the 'valid' column
-  valid_df = valid_df.drop('valid', axis=1)
-  invalid_df = invalid_df.drop('valid', axis=1)
+  return total_rows, valid_rows, invalid_rows
 
-  return valid_df, invalid_df
-
-# Example usage
+# Sample DataFrame
 data = {'ID': ['X123', 'Y456', 'AB78', 'X9', 'Z10']}
 df = pd.DataFrame(data)
 
-valid_ids, invalid_ids = validate_ids(df, 'ID')
+total, valid, invalid = validate_ids(df, 'ID')
 
-print("Valid IDs:")
-print(valid_ids)
-
-print("\nInvalid IDs:")
-print(invalid_ids)
+print(f"Total number of rows in the original file: {total}")
+print(f"Number of valid rows: {valid}")
+print(f"Number of invalid rows: {invalid}")
