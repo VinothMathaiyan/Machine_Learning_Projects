@@ -1,24 +1,28 @@
-import pandas as pd
-
-def find_blank_columns(df):
-  """Finds columns in a DataFrame that are completely blank.
+def check_values_in_column(df, column_name, values):
+  """Checks if the given values appear in the specified column of the DataFrame.
 
   Args:
-    df: The pandas DataFrame to check.
+    df: The pandas DataFrame.
+    column_name: The name of the column to check.
+    values: A list of values to check for.
 
   Returns:
-    A list of column names that are completely blank.
+    A list of values that are not present in the column.
   """
 
-  blank_columns = []
-  for col in df.columns:
-    if df[col].isnull().all():
-      blank_columns.append(col)
-  return blank_columns
+  missing_values = []
+  for value in values:
+    if value not in df[column_name].values:
+      missing_values.append(value)
+  return missing_values
 
 # Example usage:
-data = {'col1': [1, 2, 3], 'col2': [None, None, None], 'col3': ['', '', '']}
+import pandas as pd
+
+data = {'column1': [1, 2, 3, 4, 5]}
 df = pd.DataFrame(data)
 
-blank_cols = find_blank_columns(df)
-print(blank_cols)  # Output: ['col2']
+values_to_check = [2, 5, 7]
+
+missing = check_values_in_column(df, 'column1', values_to_check)
+print(missing)  # Output: [7]
