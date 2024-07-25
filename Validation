@@ -1,33 +1,24 @@
 import pandas as pd
 
-def validate_fields(df, field1, field2, unavailable_values):
-  """Validates fields based on specified conditions.
+def find_blank_columns(df):
+  """Finds columns in a DataFrame that are completely blank.
 
   Args:
-    df: The pandas DataFrame.
-    field1: The name of the first field (DateOfBirth).
-    field2: The name of the second field (AgeRange).
-    unavailable_values: A list of acceptable values for missing DateOfBirth.
+    df: The pandas DataFrame to check.
 
   Returns:
-    A tuple containing a list of error indices and the number of errors.
+    A list of column names that are completely blank.
   """
 
-  error_df = df[(df[field1].isna()) & (~df[field2].isin(unavailable_values))]
-  error_df['Error Message'] = f"{field1} is missing while {field2} has a valid value"
-  errors = error_df.index.tolist()
-  errors_length = len(errors)
-  return error_df, errors_length
+  blank_columns = []
+  for col in df.columns:
+    if df[col].isnull().all():
+      blank_columns.append(col)
+  return blank_columns
 
-# Sample DataFrame
-data = {'DateOfBirth': [pd.NaT, '2000-01-01', pd.NaT],
-        'AgeRange': ['Unavailable', '20-30', 'Not Applicable']}
+# Example usage:
+data = {'col1': [1, 2, 3], 'col2': [None, None, None], 'col3': ['', '', '']}
 df = pd.DataFrame(data)
 
-field1 = 'DateOfBirth'
-field2 = 'AgeRange'
-unavailable_values = ['Unavailable', 'Not Applicable']
-
-error_df, errors_count = validate_fields(df, field1, field2, unavailable_values)
-print(error_df)
-print("Number of errors:", errors_count)
+blank_cols = find_blank_columns(df)
+print(blank_cols)  # Output: ['col2']
