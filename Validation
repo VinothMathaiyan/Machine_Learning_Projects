@@ -1,1 +1,29 @@
-  email_regex = r"^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,}$"
+import pandas as pd
+
+def validate_fields(df, field1, field2):
+  """Validates fields based on specified conditions.
+
+  Args:
+    df: The pandas DataFrame.
+    field1: The name of the first field.
+    field2: The name of the second field.
+
+  Returns:
+    A tuple containing a list of error indices and the number of errors.
+  """
+
+  errors = df[(df[field1].isna()) & (~df[field2].isna())].index.tolist()
+  errors_length = len(errors)
+  return errors, errors_length
+
+# Sample DataFrame
+data = {'LengthOfServiceStartDate': [pd.NaT, '2022-01-01', pd.NaT],
+        'LengthOfServiceRange': [5, 3, 2]}
+df = pd.DataFrame(data)
+
+field1 = 'LengthOfServiceStartDate'
+field2 = 'LengthOfServiceRange'
+
+error_indices, errors_count = validate_fields(df, field1, field2)
+print("Error indices:", error_indices)
+print("Number of errors:", errors_count)
