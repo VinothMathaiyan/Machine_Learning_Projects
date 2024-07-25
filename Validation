@@ -13,8 +13,8 @@ def extract_valid_rows(df):
   # Filter rows where either ID_valid or Email_valid is True
   valid_df = df[(df['ID_valid'] == True) | (df['Email_valid'] == True)]
 
-  # Check for duplicate emails
-  valid_df['duplicate_email'] = valid_df['Email'].duplicated(keep='first')
+  # Check for duplicate emails and create a new column
+  valid_df['duplicate_email'] = valid_df['Email'].duplicated(keep=False)
 
   return valid_df
 
