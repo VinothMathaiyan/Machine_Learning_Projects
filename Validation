@@ -1,9 +1,44 @@
 import pandas as pd
 import re
 
-def validate_emails(df):
-    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    valid_emails = df['Email'].str.match(email_regex).fillna(False)
-    valid_df = df[valid_emails]
-    invalid_df = df[~valid_emails]
-    return valid_df, invalid_df
+def validate_id(df, column_name='ID'):
+  """Validates IDs in a DataFrame.
+
+  Args:
+    df: The pandas DataFrame.
+    column_name: The name of the column to validate.
+
+  Returns:
+    A pandas Series indicating the validity of each ID.
+  """
+
+  valid_id_pattern = r'^[a-zA-Z]\d{8}$'
+  return df[column_name].str.match(valid_id_pattern).fillna(False)
+
+def validate_email(df, column_name='Email'):
+  """Validates email addresses in a DataFrame.
+
+  Args:
+    df: The pandas DataFrame.
+    column_name: The name of the column to validate.
+
+  Returns:
+    A pandas Series indicating the validity of each email.
+  """
+
+  email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+  return df[column_name].str.match(email_regex).fillna(False)
+
+def validate_dataframe(df):
+  """Validates IDs and emails in a DataFrame and creates 'ID_valid' and 'Email_valid' columns.
+
+  Args:
+    df: The pandas DataFrame.
+
+  Returns:
+    The DataFrame with added 'ID_valid' and 'Email_valid' columns.
+  """
+
+  df['ID_valid'] = validate_id(df, 'ID')
+  df['Email_valid'] = validate_email(df, 'Email')
+  return df
