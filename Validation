@@ -2,26 +2,8 @@ import pandas as pd
 import re
 
 def validate_emails(df):
-  """Validates email addresses in a DataFrame and separates valid and invalid rows.
-
-  Args:
-    df: The pandas DataFrame containing email addresses.
-
-  Returns:
-    A tuple of two DataFrames: valid_df and invalid_df.
-  """
-
-  # Basic email validation regex (improve as needed)
-  email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-
-  # Create a boolean mask for valid emails
-  valid_emails = df['Email'].str.match(email_regex)
-
-  # Create valid and invalid DataFrames
-  valid_df = df[valid_emails]
-  invalid_df = df[~valid_emails]
-
-  return valid_df, invalid_df
-
-# Example usage:
-valid_df, invalid_df = validate_emails(valid_df)
+    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    valid_emails = df['Email'].str.match(email_regex).fillna(False)
+    valid_df = df[valid_emails]
+    invalid_df = df[~valid_emails]
+    return valid_df, invalid_df
