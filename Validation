@@ -1,28 +1,42 @@
-def check_values_in_column(df, column_name, values):
-  """Checks if the given values appear in the specified column of the DataFrame.
+import pandas as pd
+import re
+
+def validate_ids(df, column_name):
+  """
+  Validates IDs in a DataFrame column.
 
   Args:
     df: The pandas DataFrame.
-    column_name: The name of the column to check.
-    values: A list of values to check for.
+    column_name: The name of the column to validate.
 
   Returns:
-    A list of values that are not present in the column.
+    A tuple of two DataFrames: valid and invalid IDs.
   """
 
-  missing_values = []
-  for value in values:
-    if value not in df[column_name].values:
-      missing_values.append(value)
-  return missing_values
+  # Regular expression to match valid IDs
+  valid_id_pattern = r'^[XY]\d+$'
 
-# Example usage:
-import pandas as pd
+  # Create a new column indicating validity
+  df['valid'] = df[column_name].str.match(valid_id_pattern)
 
-data = {'column1': [1, 2, 3, 4, 5]}
+  # Split the DataFrame into valid and invalid
+  valid_df = df[df['valid']]
+  invalid_df = df[~df['valid']]
+
+  # Drop the 'valid' column
+  valid_df = valid_df.drop('valid', axis=1)
+  invalid_df = invalid_df.drop('valid', axis=1)
+
+  return valid_df, invalid_df
+
+# Example usage
+data = {'ID': ['X123', 'Y456', 'AB78', 'X9', 'Z10']}
 df = pd.DataFrame(data)
 
-values_to_check = [2, 5, 7]
+valid_ids, invalid_ids = validate_ids(df, 'ID')
 
-missing = check_values_in_column(df, 'column1', values_to_check)
-print(missing)  # Output: [7]
+print("Valid IDs:")
+print(valid_ids)
+
+print("\nInvalid IDs:")
+print(invalid_ids)
