@@ -1,16 +1,28 @@
 import pandas as pd
 
-def check_header_value(df, header_name):
-  """
-  Checks if the value in the specified header of the DataFrame is blank.
+def create_separate_dataframe(df, columns_to_check):
+  """Creates a separate DataFrame containing rows where any of the specified columns have False values.
 
   Args:
-    df: The pandas DataFrame.
-    header_name: The name of the header to check.
+    df: The original DataFrame.
+    columns_to_check: A list of column names to check for False values.
 
   Returns:
-    True if the header value is not blank, False otherwise.
+    A new DataFrame containing rows with False values in any of the specified columns.
   """
 
-  header_value = df[header_name].iloc[0]  # Assuming first row contains header values
-  return not pd.isna(header_value) and header_value != ''
+  # Check if any value in the specified columns is False
+  condition = df[columns_to_check].any(axis=1)
+  
+  # Create a new DataFrame with rows where the condition is True
+  new_df = df[condition]
+  
+  return new_df
+
+# Example usage:
+data = {'Column1': [True, False, True], 'Column2': [True, True, False], 'Column3': [True, True, True]}
+df = pd.DataFrame(data)
+
+columns_to_check = ['Column1', 'Column2']
+new_df = create_separate_dataframe(df, columns_to_check)
+print(new_df)
