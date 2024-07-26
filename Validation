@@ -1,29 +1,17 @@
-import pandas as pd
+function removeDuplicatesById(data, idProp) {
+  const uniqueIds = new Set();
+  return data.filter(item => {
+    const id = item[idProp];
+    return uniqueIds.has(id) ? false : uniqueIds.add(id);
+  });
+}
 
-def create_separate_dataframe(df):
-  """Creates a separate DataFrame containing rows where any of the columns ending with '_valid' or starting with 'duplicates_' have False values.
+// Example usage:
+const data = [
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' },
+  { id: 1, name: 'Charlie' }
+];
 
-  Args:
-    df: The original DataFrame.
-
-  Returns:
-    A new DataFrame containing rows with False values in any of the specified columns.
-  """
-
-  # Extract columns ending with '_valid' or starting with 'duplicates_'
-  columns_to_check = df.columns[(df.columns.str.endswith('_valid')) | (df.columns.str.startswith('duplicates_'))]
-
-  # Check if any value in the specified columns is False
-  condition = df[columns_to_check].any(axis=1)
-
-  # Create a new DataFrame with rows where the condition is True
-  new_df = df[condition]
-
-  return new_df
-
-# Example usage:
-data = {'Column1': [True, False, True], 'Column2': [True, True, False], 'duplicates_Column': [True, False, True], 'valid_flag': [True, False, True]}
-df = pd.DataFrame(data)
-
-new_df = create_separate_dataframe(df)
-print(new_df)
+const uniqueData = removeDuplicatesById(data, 'id');
+console.log(uniqueData); // Output: [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }]
