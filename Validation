@@ -1,24 +1,16 @@
 import pandas as pd
 
-def extract_valid_rows(df):
-  """Extracts rows where either ID_valid or Email_valid is True and checks for email duplicates.
+def check_header_value(df, header_name):
+  """
+  Checks if the value in the specified header of the DataFrame is blank.
 
   Args:
     df: The pandas DataFrame.
+    header_name: The name of the header to check.
 
   Returns:
-    A pandas DataFrame with valid rows and a flag for duplicate emails.
+    True if the header value is not blank, False otherwise.
   """
 
-  # Filter rows where either ID_valid or Email_valid is True
-  valid_df = df[(df['ID_valid'] == True) | (df['Email_valid'] == True)]
-
-  # Check for duplicate emails and create a new column
-  valid_df['duplicate_email'] = valid_df['Email'].duplicated(keep=False)
-
-  return valid_df
-
-# Example usage:
-# Assuming you have a DataFrame named df with columns 'ID', 'Email', 'ID_valid', and 'Email_valid'
-valid_data = extract_valid_rows(df)
-print(valid_data)
+  header_value = df[header_name].iloc[0]  # Assuming first row contains header values
+  return not pd.isna(header_value) and header_value != ''
