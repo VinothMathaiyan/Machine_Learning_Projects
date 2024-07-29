@@ -1,27 +1,19 @@
 import pandas as pd
 
-def extract_and_combine(df):
-  """Extracts columns and data based on patterns and combines them into a single DataFrame.
-
-  Args:
-    df: The input DataFrame.
-
-  Returns:
-    A DataFrame containing the extracted columns and data.
-  """
-
-  valid_columns = [col for col in df.columns if col.endswith('_valid')]
-  duplicate_data = df.filter(regex=r'^Duplicate_')
-
-  # Combine the DataFrames
-  combined_df = pd.concat([df[valid_columns], duplicate_data], axis=1)
-  return combined_df
-
-# Example usage:
-data = {'Column1_valid': [1, 2, 3],
-        'Duplicate_Column2': ['a', 'b', 'c'],
-        'Column3': [4, 5, 6]}
+# Sample DataFrame with boolean columns
+data = {'Column1_valid': [True, False, True],
+        'Duplicate_Column2': [False, True, False],
+        'Column3': [True, False, True]}
 df = pd.DataFrame(data)
 
-combined_df = extract_and_combine(df)
-print(combined_df)
+# Create a summary DataFrame
+summary_df = df.apply(pd.Series.value_counts).T
+
+# Drop False column and rename True column
+summary_df.drop(False, axis=1, inplace=True)
+summary_df.rename(columns={'True': 'Number of Ids affected'}, inplace=True)
+
+# Remove "_valid" and "Duplicate_" from index
+summary_df.index = summary_df.index.str.replace('_valid', '', regex=False).str.replace('Duplicate_', '', regex=False)
+
+print(summary_df)
