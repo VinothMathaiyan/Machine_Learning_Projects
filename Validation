@@ -1,19 +1,26 @@
 import pandas as pd
 
-# Sample DataFrame with boolean columns
+def count_true_values(df, column_name):
+  """Counts the number of True values in a specified column of a DataFrame.
+
+  Args:
+    df: The pandas DataFrame.
+    column_name: The name of the column to check.
+
+  Returns:
+    The count of True values in the specified column.
+  """
+
+  try:
+    return df[column_name].value_counts()[True]
+  except KeyError:
+    return 0
+
+# Example usage:
 data = {'Column1_valid': [True, False, True],
         'Duplicate_Column2': [False, True, False],
         'Column3': [True, False, True]}
 df = pd.DataFrame(data)
 
-# Create a summary DataFrame
-summary_df = df.apply(pd.Series.value_counts).T
-
-# Drop False column and rename True column
-summary_df.drop(False, axis=1, inplace=True)
-summary_df.rename(columns={'True': 'Number of Ids affected'}, inplace=True)
-
-# Remove "_valid" and "Duplicate_" from index
-summary_df.index = summary_df.index.str.replace('_valid', '', regex=False).str.replace('Duplicate_', '', regex=False)
-
-print(summary_df)
+count = count_true_values(df, 'Column1_valid')
+print(count)  # Output: 2
