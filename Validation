@@ -1,17 +1,27 @@
-function removeDuplicatesById(data, idProp) {
-  const uniqueIds = new Set();
-  return data.filter(item => {
-    const id = item[idProp];
-    return uniqueIds.has(id) ? false : uniqueIds.add(id);
-  });
-}
+import pandas as pd
 
-// Example usage:
-const data = [
-  { id: 1, name: 'Alice' },
-  { id: 2, name: 'Bob' },
-  { id: 1, name: 'Charlie' }
-];
+def extract_and_combine(df):
+  """Extracts columns and data based on patterns and combines them into a single DataFrame.
 
-const uniqueData = removeDuplicatesById(data, 'id');
-console.log(uniqueData); // Output: [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }]
+  Args:
+    df: The input DataFrame.
+
+  Returns:
+    A DataFrame containing the extracted columns and data.
+  """
+
+  valid_columns = [col for col in df.columns if col.endswith('_valid')]
+  duplicate_data = df.filter(regex=r'^Duplicate_')
+
+  # Combine the DataFrames
+  combined_df = pd.concat([df[valid_columns], duplicate_data], axis=1)
+  return combined_df
+
+# Example usage:
+data = {'Column1_valid': [1, 2, 3],
+        'Duplicate_Column2': ['a', 'b', 'c'],
+        'Column3': [4, 5, 6]}
+df = pd.DataFrame(data)
+
+combined_df = extract_and_combine(df)
+print(combined_df)
