@@ -1,21 +1,26 @@
 import pandas as pd
 from datetime import datetime
+from openpyxl import Workbook
 
-def validate_date(date_string, format='%Y-%m-%d'):
-    try:
-        datetime.strptime(date_string, format)
-        return True
-    except ValueError:
-        return False
+def create_excel_file(error_df, validation_output):
+  """Creates an Excel file with two sheets containing the given DataFrames.
 
-df = pd.read_csv('your_data.csv')
+  Args:
+    error_df: DataFrame containing error data.
+    validation_output: DataFrame containing validation output.
+  """
 
-df['date_valid'] = df['LDO'].apply(validate_date)
+  today = datetime.today().strftime('%Y-%m-%d')
+  file_name = f"Active_error_{today}.xlsx"
 
-invalid_dates = df[df['date_valid'] == False]
+  writer = pd.ExcelWriter(file_name, engine='openpyxl')
 
-if not invalid_dates.empty:
-    print("Invalid dates found:")
-    print(invalid_dates)
-else:
-    print("All dates are valid.")
+  error_df.to_excel(writer, sheet_name='errordata', index=False)
+  validation_output.to_excel(writer, sheet_name='Summary', index=False)
+
+  writer.save()
+
+# Example usage:
+# Assuming error_df and validation_output are defined
+
+create_excel_file(error_df, validation_output)
