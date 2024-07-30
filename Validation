@@ -1,26 +1,21 @@
 import pandas as pd
+from datetime import datetime
 
-def count_true_values(df, column_name):
-  """Counts the number of True values in a specified column of a DataFrame.
+def validate_date(date_string, format='%Y-%m-%d'):
+    try:
+        datetime.strptime(date_string, format)
+        return True
+    except ValueError:
+        return False
 
-  Args:
-    df: The pandas DataFrame.
-    column_name: The name of the column to check.
+df = pd.read_csv('your_data.csv')
 
-  Returns:
-    The count of True values in the specified column.
-  """
+df['date_valid'] = df['LDO'].apply(validate_date)
 
-  try:
-    return df[column_name].value_counts()[True]
-  except KeyError:
-    return 0
+invalid_dates = df[df['date_valid'] == False]
 
-# Example usage:
-data = {'Column1_valid': [True, False, True],
-        'Duplicate_Column2': [False, True, False],
-        'Column3': [True, False, True]}
-df = pd.DataFrame(data)
-
-count = count_true_values(df, 'Column1_valid')
-print(count)  # Output: 2
+if not invalid_dates.empty:
+    print("Invalid dates found:")
+    print(invalid_dates)
+else:
+    print("All dates are valid.")
