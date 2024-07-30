@@ -2,25 +2,12 @@ import pandas as pd
 from datetime import datetime
 from openpyxl import Workbook
 
-def create_excel_file(error_df, validation_output):
-  """Creates an Excel file with two sheets containing the given DataFrames.
+today = datetime.today().strftime('%Y-%m-%d')
+file_name = f"Active_error_{today}.xlsx"
 
-  Args:
-    error_df: DataFrame containing error data.
-    validation_output: DataFrame containing validation output.
-  """
+writer = pd.ExcelWriter(file_name, engine='openpyxl')
 
-  today = datetime.today().strftime('%Y-%m-%d')
-  file_name = f"Active_error_{today}.xlsx"
+error_df.to_excel(writer, sheet_name='errordata', index=False)
+validation_output.to_excel(writer, sheet_name='Summary', index=False)
 
-  writer = pd.ExcelWriter(file_name, engine='openpyxl')
-
-  error_df.to_excel(writer, sheet_name='errordata', index=False)
-  validation_output.to_excel(writer, sheet_name='Summary', index=False)
-
-  writer.save()
-
-# Example usage:
-# Assuming error_df and validation_output are defined
-
-create_excel_file(error_df, validation_output)
+writer.save()
