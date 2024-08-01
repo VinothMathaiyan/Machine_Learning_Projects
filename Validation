@@ -1,13 +1,5 @@
-import pandas as pd
-from datetime import datetime
-from openpyxl import Workbook
-
-today = datetime.today().strftime('%Y-%m-%d')
-file_name = f"Active_error_{today}.xlsx"
-
-writer = pd.ExcelWriter(file_name, engine='openpyxl')
-
-error_df.to_excel(writer, sheet_name='errordata', index=False)
-validation_output.to_excel(writer, sheet_name='Summary', index=False)
-
-writer.save()
+Create a duplicate dashboard: Make a copy of the existing dashboard and add a prefix of [ ].
+Add new data source: Incorporate a fresh data source into the duplicated dashboard.
+Recode data: Modify the data for variable [specify variable] within Data Source 1.
+Develop filters and widgets: Create filters and widgets to refine and visualize the data.
+Validate data: Ensure data accuracy and consistency within the dashboard.
