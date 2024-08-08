@@ -1,1 +1,44 @@
 
+import pandas as pd
+
+def compare_columns(id_col, col1, colx1):
+  """Compares two columns from DataFrames df1 and df2 based on a common ID.
+
+  Args:
+    id_col: The name of the ID column.
+    col1: The name of the column in df1 to compare.
+    colx1: The name of the column in df2 to compare.
+
+  Returns:
+    A DataFrame containing mismatched rows with ID, Col1, and Colx1 values.
+  """
+
+  # Set the ID column as index for both DataFrames
+  df1 = df1.set_index(id_col)
+  df2 = df2.set_index(id_col)
+
+  # Right join to preserve all rows from df2
+  merged_df = df1.join(df2, how='right')
+
+  # Identify rows where Col1 and Colx1 values differ
+  mismatch_df = merged_df[merged_df[col1] != merged_df[colx1]]
+
+  # Reset index to bring ID back as a column
+  mismatch_df = mismatch_df.reset_index()
+
+  return mismatch_df[['ID', col1, colx1]]
+
+# Read DataFrames outside the function
+try:
+  df1 = pd.read_csv('path_to_df1.csv')
+  df2 = pd.read_csv('path_to_df2.csv')
+except FileNotFoundError:
+  print("One or both CSV files not found.")
+except ValueError as e:
+  print(e)
+except Exception as e:
+  print(f"An unexpected error occurred: {e}")
+
+# Example usage:
+mismatches = compare_columns('ID', 'Col1', 'Colx1')
+print(mismatches)
