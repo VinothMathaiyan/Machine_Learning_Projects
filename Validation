@@ -1,44 +1,61 @@
-
 import pandas as pd
 
-def compare_columns(id_col, col1, colx1):
-  """Compares two columns from DataFrames df1 and df2 based on a common ID.
+def compare_columns(merged_df, key_column, column_pairs):
+    """
+    Compare specified columns from a merged dataframe and return discrepancies.
 
-  Args:
-    id_col: The name of the ID column.
-    col1: The name of the column in df1 to compare.
-    colx1: The name of the column in df2 to compare.
+    Parameters:
+    merged_df (pd.DataFrame): Merged DataFrame.
+    key_column (str): Column name to identify rows.
+    column_pairs (list of tuples): List of tuples where each tuple contains two column names to compare (col_df1, col_df2).
 
-  Returns:
-    A DataFrame containing mismatched rows with ID, Col1, and Colx1 values.
-  """
+    Returns:
+    pd.DataFrame: DataFrame with discrepancies.
+    """
+    
+    # Initialize an empty list to store discrepancy data
+    discrepancies_list = []
+    
+    # Iterate over each pair of columns
+    for idx, (col1, col2) in enumerate(column_pairs):
+        # Find rows where the values in the columns are not equal
+        discrepancies = merged_df[merged_df[col1] != merged_df[col2]]
+        
+        # For each discrepancy, add a row to the list with the key, column names, differing values, and an ID
+        for _, row in discrepancies.iterrows():
+            discrepancies_list.append({
+                'ID': idx + 1,  # ID starting from 1
+                key_column: row[key_column],
+                'column1': col1,
+                'value_df1': row[col1],
+                'column2': col2,
+                'value_df2': row[col2]
+            })
+    
+    # Convert the list of discrepancies to a DataFrame
+    result_df = pd.DataFrame(discrepancies_list)
+    
+    return result_df
 
-  # Set the ID column as index for both DataFrames
-  df1 = df1.set_index(id_col)
-  df2 = df2.set_index(id_col)
+# Example usage
+df1 = pd.DataFrame({
+    'key': ['A', 'B', 'C'],
+    'value1': [1, 2, 3],
+    'value2': [4, 5, 6]
+})
 
-  # Right join to preserve all rows from df2
-  merged_df = df1.join(df2, how='right')
+df2 = pd.DataFrame({
+    'key': ['B', 'C', 'D'],
+    'value1': [2, 3, 3],
+    'value3': [5, 6, 7]
+})
 
-  # Identify rows where Col1 and Colx1 values differ
-  mismatch_df = merged_df[merged_df[col1] != merged_df[colx1]]
+# Merge the dataframes on the key column
+merged_df = pd.merge(df1, df2, on='key', suffixes=('_df1', '_df2'))
 
-  # Reset index to bring ID back as a column
-  mismatch_df = mismatch_df.reset_index()
+# Specify the columns to compare
+column_pairs = [('value1_df1', 'value2_df1'), ('value1_df2', 'value3_df2')]
 
-  return mismatch_df[['ID', col1, colx1]]
-
-# Read DataFrames outside the function
-try:
-  df1 = pd.read_csv('path_to_df1.csv')
-  df2 = pd.read_csv('path_to_df2.csv')
-except FileNotFoundError:
-  print("One or both CSV files not found.")
-except ValueError as e:
-  print(e)
-except Exception as e:
-  print(f"An unexpected error occurred: {e}")
-
-# Example usage:
-mismatches = compare_columns('ID', 'Col1', 'Colx1')
-print(mismatches)
+# Call the function and print the result
+discrepancies = compare_columns(merged_df, 'key', column_pairs)
+print(discrepancies)
