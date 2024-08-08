@@ -2,7 +2,7 @@ import pandas as pd
 
 def compare_columns(merged_df, key_column, column_pairs):
     """
-    Compare specified columns from a merged dataframe and return discrepancies.
+    Compare specified columns from a merged dataframe and return discrepancies in separate lists.
 
     Parameters:
     merged_df (pd.DataFrame): Merged DataFrame.
@@ -10,32 +10,22 @@ def compare_columns(merged_df, key_column, column_pairs):
     column_pairs (list of tuples): List of tuples where each tuple contains two column names to compare (col_df1, col_df2).
 
     Returns:
-    pd.DataFrame: DataFrame with discrepancies.
+    dict of pd.DataFrames: Dictionary where keys are the comparison labels and values are DataFrames with discrepancies.
     """
     
-    # Initialize an empty list to store discrepancy data
-    discrepancies_list = []
+    # Initialize a dictionary to store discrepancy DataFrames
+    discrepancies_dict = {}
     
     # Iterate over each pair of columns
-    for idx, (col1, col2) in enumerate(column_pairs):
+    for col1, col2 in column_pairs:
         # Find rows where the values in the columns are not equal
         discrepancies = merged_df[merged_df[col1] != merged_df[col2]]
         
-        # For each discrepancy, add a row to the list with the key, column names, differing values, and an ID
-        for _, row in discrepancies.iterrows():
-            discrepancies_list.append({
-                'ID': idx + 1,  # ID starting from 1
-                key_column: row[key_column],
-                'column1': col1,
-                'value_df1': row[col1],
-                'column2': col2,
-                'value_df2': row[col2]
-            })
+        # If there are discrepancies, add them to the dictionary
+        if not discrepancies.empty:
+            discrepancies_dict[f"{col1}-{col2}"] = discrepancies[[key_column, col1, col2]]
     
-    # Convert the list of discrepancies to a DataFrame
-    result_df = pd.DataFrame(discrepancies_list)
-    
-    return result_df
+    return discrepancies_dict
 
 # Example usage
 df1 = pd.DataFrame({
@@ -46,16 +36,19 @@ df1 = pd.DataFrame({
 
 df2 = pd.DataFrame({
     'key': ['B', 'C', 'D'],
-    'value1': [2, 3, 3],
-    'value3': [5, 6, 7]
+    'value2': [3, 5, 6],
+    'value3': [7, 6, 7]
 })
 
 # Merge the dataframes on the key column
 merged_df = pd.merge(df1, df2, on='key', suffixes=('_df1', '_df2'))
 
 # Specify the columns to compare
-column_pairs = [('value1_df1', 'value2_df1'), ('value1_df2', 'value3_df2')]
+column_pairs = [('value1_df1', 'value2_df1'), ('value2_df1', 'value3_df2')]
 
-# Call the function and print the result
-discrepancies = compare_columns(merged_df, 'key', column_pairs)
-print(discrepancies)
+# Call the function and get the result
+discrepancies_dict = compare_columns(merged_df, 'key', column_pairs)
+
+# Print discrepancies for each column pair
+for comparison, df in discrepancies_dict.items():
+    print(f"Discrepancies for {comparison}:\n", df, "\n")
