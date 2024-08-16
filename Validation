@@ -1,54 +1,58 @@
-import pandas as pd
+Survey Overview
+The leaver survey was designed to gather comprehensive feedback from employees who have recently left the organization. The key areas of focus included:
 
-def compare_columns(merged_df, key_column, column_pairs, output_file):
-    """
-    Compare specified columns from a merged dataframe and save discrepancies to an Excel file.
+Overall Experience: The survey began by asking about the employee's overall experience working at [Company X].
 
-    Parameters:
-    merged_df (pd.DataFrame): Merged DataFrame.
-    key_column (str): Column name to identify rows.
-    column_pairs (list of tuples): List of tuples where each tuple contains two column names to compare (col_df1, col_df2).
-    output_file (str): Path to the output Excel file.
-    """
-    
-    # Initialize a dictionary to store discrepancy DataFrames
-    discrepancies_dict = {}
-    
-    # Iterate over each pair of columns
-    for col1, col2 in column_pairs:
-        # Find rows where the values in the columns are not equal
-        discrepancies = merged_df[merged_df[col1] != merged_df[col2]]
-        
-        # If there are discrepancies, add them to the dictionary
-        if not discrepancies.empty:
-            discrepancies_dict[f"{col1}-{col2}"] = discrepancies[[key_column, col1, col2]]
-    
-    # Save discrepancies to an Excel file with multiple sheets
-    with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
-        for comparison, df in discrepancies_dict.items():
-            df.to_excel(writer, sheet_name=comparison, index=False)
+Positive Aspects: Employees were asked to rank the best parts of working at [Company X], highlighting what they valued most during their tenure.
 
-# Example usage
-df1 = pd.DataFrame({
-    'key': ['A', 'B', 'C'],
-    'value1': [1, 2, 3],
-    'value2': [4, 5, 6]
-})
+Opportunities for Improvement: Respondents identified the three biggest opportunities for improvement within the organization.
 
-df2 = pd.DataFrame({
-    'key': ['B', 'C', 'D'],
-    'value1': [2, 3, 4],
-    'value3': [7, 6, 7]
-})
+Decision to Leave: The survey explored the top three factors that influenced their decision to leave [Company X].
 
-# Merge the dataframes on the key column
-merged_df = pd.merge(df1, df2, on='key', suffixes=('_df1', '_df2'))
+Follow-Up Questions: Based on their selections, respondents answered 11 additional questions, including two free-text questions specifically about Tools and Processes.
+Trigger for Job Search: The survey delved into what prompted employees to start looking for new roles outside [Company X].
 
-# Specify the columns to compare
-column_pairs = [('value1_df1', 'value1_df2'), ('value2_df1', 'value3_df2')]
+Next Role and Industry:
 
-# Path to the output Excel file
-output_file = 'discrepancies.xlsx'
+Type of Role: Employees were asked whether their next role was in finance or non-finance.
+Industry: For non-finance roles, respondents specified which industry they moved to.
+Finance Roles: For those staying in finance, the survey explored the type of finance role they transitioned into.
+Potential Return: The survey inquired whether employees would consider returning to [Company X] in the future.
 
-# Call the function and save the results to an Excel file
-compare_columns(merged_df, 'key', column_pairs, output_file)
+Recommendation: Finally, respondents were asked if they would recommend [Company X] as a great place to work to people they know.
+
+Dashboard Overview
+The Leaver Survey Dashboard is organized into several key pages, each providing valuable insights into the feedback gathered from departing employees:
+
+Introduction Page
+
+Focus: This page provides an overview of the survey distribution and includes the key question on whether departing employees would recommend [Company X].
+Key Insights: It sets the context for the rest of the dashboard, offering a snapshot of the overall response distribution and initial sentiment.
+Headline Page
+
+Focus: This page highlights the key metrics as identified by stakeholders during the dashboard’s development.
+Key Insights: It serves as a quick reference for the most important metrics, offering a high-level view of the survey results.
+Experience of Leavers at X
+
+Focus: This section delves into the overall experience of the employees who are leaving [Company X].
+Key Insights: It presents detailed feedback on what departing employees felt about their time at the company, helping us understand their overall sentiment.
+Would Leavers Recommend
+
+Focus: This page focuses on the likelihood of leavers recommending [Company X] as a great place to work.
+Key Insights: It provides a clear indication of how departing employees view the company and its reputation.
+Why Leavers Are Choosing to Leave X
+
+Focus: Here, we explore the primary reasons why employees are leaving [Company X].
+Key Insights: This section analyzes the key factors influencing their decision to depart, offering insights into areas that may need attention.
+Where Leavers Are Going
+
+Focus: This page looks at the next steps for departing employees, including the industries or roles they are moving into.
+Key Insights: It provides a breakdown of their career paths post-departure, helping us understand where talent is flowing.
+Result Split by Gender
+
+Focus: This section analyzes the survey results by gender to identify any patterns or differences in the feedback.
+Key Insights: It helps us determine if there are any gender-specific trends that require targeted interventions.
+Summary Page
+
+Focus: The final page consolidates the key findings, including a timeline-based trend analysis.
+Key Insights: It provides a comprehensive summary of the survey results, highlighting trends over time and offering actionable insights.
