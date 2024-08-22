@@ -1,39 +1,14 @@
-.button {
-  padding: 10px 20px;
-  border: 1px solid #006de3;
-  border-radius: 5px;
-  background-color: #006de3;
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
+Qualtrics.SurveyEngine.addOnload(function(question) {
+  var questionId = question.getQuestionId();
+  var input = document.getElementById(questionId);
 
-.button:hover {
-  background-color: #005ca3;
-}
-
-.button:active {
-  background-color: #004982;
-  transform: translateY(2px);
-}
-
-.button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px #007BFF;
-}
-
-.button:focus-within {
-  border-color: #007BFF;
-}
-
-.button:focus-visible {
-  outline: 2px solid #007BFF;
-}
-
-.button:visited {
-  background-color: #004982;
-}
-
-.button:target {
-  box-shadow: 0 0 5px #FFD700;
-}
+  input.addEventListener('input', function() {
+    var wordCount = this.value.trim().split(/\s+/).length;
+    if (wordCount > 300) {
+      // Raise an error or provide feedback
+      alert("You have exceeded the maximum word count of 300.");
+      // You can also set a validation error message in Qualtrics using:
+      // question.setValidationError("You have exceeded the maximum word count of 300.");
+    }
+  });
+});
