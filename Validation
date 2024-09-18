@@ -1,24 +1,46 @@
 import pandas as pd
 
-# Load the Excel file with multiple sheets
-file_path = 'your_file.xlsx'  # Replace with your file path
-excel_data = pd.read_excel(file_path, sheet_name=None)
+# Load the master CSV file
+df_master = pd.read_csv('master_file.csv')
 
-# Load the df_key DataFrame
-df_key = pd.read_excel('your_key_file.xlsx')  # Replace with your key file path
+# Assign column names to variables for better readability
+HCS = df_master['HCS']
+OU = df_master['OU']
+Country = df_master['Country']
+EMAIL = df_master['EMAIL']
+ED = df_master['ED']
+TRANSACTIONDATE = df_master['TRANSACTIONDATE']
+Transaction = df_master['Transaction']
 
-# Iterate through each sheet in the Excel file
-for sheet_name, sheet_df in excel_data.items():
-    # Merge each sheet with df_key based on the 'ID' column
-    merged_df = pd.merge(sheet_df, df_key, on='ID', how='left')
-    
-    # Update the sheet data with the merged DataFrame
-    excel_data[sheet_name] = merged_df
+# Define the conditions using the assigned variables
+conditions = [
+    (HCS == 'OP') &
+    (OU == 'V1') &
+    (Country != 'A') &
+    (Country != 'B') &
+    (Country != 'C') &
+    (EMAIL.notnull()) &
+    (ED != 'A1') &
+    (ED != 'A2') &
+    (ED != 'A3') &
+    (ED != 'A4') &
+    (ED != 'A5') &
+    (ED != 'A6') &
+    (TRANSACTIONDATE >= pd.Timestamp.now() - pd.Timedelta(days=85)) &
+    (Transaction > 9)
+]
 
-# Save the updated Excel file
-output_file_path = 'updated_file.xlsx'  # Replace with your desired output file path
-with pd.ExcelWriter(output_file_path) as writer:
-    for sheet_name, sheet_df in excel_data.items():
-        sheet_df.to_excel(writer, sheet_name=sheet_name, index=False)
+# Create a new column "Meets Condition" based on the conditions
+df_master['Meets Condition'] = conditions[0]
 
-print(f"Data has been successfully merged and saved to {output_file_path}")
+# Add a "Test Case" column and set a sequential number where the condition is True
+df_master['Test Case'] = df_master[df_master['Meets Condition']].index + 1
+
+# Export the updated file with rows meeting the conditions
+df_master[df_master['Meets Condition']].to_csv('updated_file.csv', index=False)
+
+# Remove rows that are in updated_file from the master and save to a new file (master_file_1)
+df_master_filtered = df_master[~df_master['Meets Condition']]
+df_master_filtered.to_csv('master_file_1.csv', index=False)
+
+print("Files 'updated_file.csv' and 'master_file_1.csv' exported successfully.")
