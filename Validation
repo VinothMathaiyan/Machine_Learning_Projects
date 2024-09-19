@@ -3,13 +3,13 @@ import pandas as pd
 # Load the master CSV file
 df_master = pd.read_csv('master_file.csv')
 
-# Define how many random rows you want to extract
-X = 100  # Replace 100 with the number of random rows you want to extract
+# Define how many times you want to repeat each row
+X = 3  # Replace 3 with the number of repetitions you want
 
-# Extract X random rows
-df_random_sample = df_master.sample(n=X, random_state=42)  # random_state ensures reproducibility
+# Repeat each row X times
+df_repeated = pd.DataFrame(df_master.values.repeat(X, axis=0), columns=df_master.columns)
 
-# Save the random sample to a new CSV file
-df_random_sample.to_csv('random_sample_file.csv', index=False)
+# Save the repeated rows to a new CSV file
+df_repeated.to_csv('repeated_rows_file.csv', index=False)
 
-print(f"File 'random_sample_file.csv' with {X} random rows exported successfully.")
+print(f"File 'repeated_rows_file.csv' with each row repeated {X} times exported successfully.")
