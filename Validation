@@ -13,3 +13,18 @@ df_repeated = pd.DataFrame(df_master.values.repeat(X, axis=0), columns=df_master
 df_repeated.to_csv('repeated_rows_file.csv', index=False)
 
 print(f"File 'repeated_rows_file.csv' with each row repeated {X} times exported successfully.")
+
+
+
+import pandas as pd
+
+# List of file names to combine (add your file names here)
+file_names = ['file1.csv', 'file2.csv', 'file3.csv']  # Replace with your file names
+
+# Load and combine all the files into one DataFrame
+df_combined = pd.concat([pd.read_csv(file) for file in file_names], ignore_index=True)
+
+# Save the combined DataFrame to a new CSV file
+df_combined.to_csv('combined_file.csv', index=False)
+
+print("Files combined successfully into 'combined_file.csv'.")
