@@ -1,30 +1,18 @@
-import pandas as pd
+Subject: Preparation for Testing of All Workflows by Next Week
 
-# Load the master CSV file
-df_master = pd.read_csv('master_file.csv')
+Hi Team,
 
-# Define how many times you want to repeat each row
-X = 3  # Replace 3 with the number of repetitions you want
+I hope you're doing well.
 
-# Repeat each row X times
-df_repeated = pd.DataFrame(df_master.values.repeat(X, axis=0), columns=df_master.columns)
+The test case file will be ready by Tuesday, and we aim to have all three workflows prepared for testing by next week. Here's a summary of the current status and actions required:
 
-# Save the repeated rows to a new CSV file
-df_repeated.to_csv('repeated_rows_file.csv', index=False)
+- **Workflow 1 (SFTP to Qualtrics Contact List)**: This is a daily process for receiving files. Please ensure it's ready for testing.
 
-print(f"File 'repeated_rows_file.csv' with each row repeated {X} times exported successfully.")
+- **Workflow 2 (Combining Data from ED)**: We're currently working on identifying the necessary fields. We'll update you on the specific requirements soon.
 
+- **Workflow 3 (Sampling)**: Most of this workflow is ready, except for the email trigger. For testing purposes, instead of sending emails, can we move the data to a list? This way, we can download and verify whether the data has been correctly added. If it meets the condition, it should be included in the file; if not, it should be excluded from the file. Please finalize this and let us know your preference.
 
+Please let me know if you need any additional information or clarification. I appreciate your continued support and effort in getting these workflows ready for testing.
 
-import pandas as pd
-
-# List of file names to combine (add your file names here)
-file_names = ['file1.csv', 'file2.csv', 'file3.csv']  # Replace with your file names
-
-# Load and combine all the files into one DataFrame
-df_combined = pd.concat([pd.read_csv(file) for file in file_names], ignore_index=True)
-
-# Save the combined DataFrame to a new CSV file
-df_combined.to_csv('combined_file.csv', index=False)
-
-print("Files combined successfully into 'combined_file.csv'.")
+Best regards,  
+[Your Name]  
