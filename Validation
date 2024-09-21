@@ -1,18 +1,1 @@
-Subject: Preparation for Testing of All Workflows by Next Week
 
-Hi Team,
-
-I hope you're doing well.
-
-The test case file will be ready by Tuesday, and we aim to have all three workflows prepared for testing by next week. Here's a summary of the current status and actions required:
-
-- **Workflow 1 (SFTP to Qualtrics Contact List)**: This is a daily process for receiving files. Please ensure it's ready for testing.
-
-- **Workflow 2 (Combining Data from ED)**: We're currently working on identifying the necessary fields. We'll update you on the specific requirements soon.
-
-- **Workflow 3 (Sampling)**: Most of this workflow is ready, except for the email trigger. For testing purposes, instead of sending emails, can we move the data to a list? This way, we can download and verify whether the data has been correctly added. If it meets the condition, it should be included in the file; if not, it should be excluded from the file. Please finalize this and let us know your preference.
-
-Please let me know if you need any additional information or clarification. I appreciate your continued support and effort in getting these workflows ready for testing.
-
-Best regards,  
-[Your Name]  
