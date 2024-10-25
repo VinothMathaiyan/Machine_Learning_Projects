@@ -1,1 +1,30 @@
+import pandas as pd
+import numpy as np
+
+# Load the Excel file
+file_path = 'your_file.xlsx'  # Update with your file path
+df = pd.read_excel(file_path)
+
+# List of columns to shuffle (swap data within the column, not the headers)
+columns_to_shuffle = ['Column1', 'Column2']  # Update with column names to shuffle
+pii_columns = ['Name', 'Email']  # Update with PII column names
+
+# Step 1: Shuffle Data Within Specified Columns
+for column in columns_to_shuffle:
+    df[column] = np.random.permutation(df[column].values)
+
+# Step 2: Pseudonymize PII Columns
+for column in pii_columns:
+    if column == 'Name':
+        # Replace names with unique pseudonyms
+        df[column] = ['User_' + str(i) for i in range(1, len(df) + 1)]
+    elif column == 'Email':
+        # Replace emails with pseudonymized emails
+        df[column] = ['user' + str(i) + '@example.com' for i in range(1, len(df) + 1)]
+
+# Save the modified DataFrame to a new Excel file
+output_path = 'pseudonymized_shuffled_file.xlsx'
+df.to_excel(output_path, index=False)
+
+print(f"Pseudonymized and updated file saved as {output_path}")
 
