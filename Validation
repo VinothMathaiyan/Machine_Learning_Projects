@@ -1,23 +1,6 @@
-import pandas as pd
-import numpy as np
-import string
-import random
-
-# Load your Excel file
-file_path = 'your_file.xlsx'  # Update with your file path
-df = pd.read_excel(file_path)
-
-# Function to create a random alphanumeric token
-def generate_token(length=8):
-    characters = string.ascii_letters + string.digits
-    return ''.join(random.choice(characters) for _ in range(length))
-
-# Generate dummy tokens for the ID column (assume column name is 'ID')
-if 'ID' in df.columns[3:]:  # Ensure we don't modify the first 3 columns
-    df['ID'] = [generate_token() for _ in range(len(df))]
-
-# Save the modified DataFrame to a new Excel file
-output_path = 'pseudonymized_with_tokens.xlsx'
-df.to_excel(output_path, index=False)
-
-print(f"Pseudonymized file with dummy tokens saved as {output_path}")
+The first three columns in the file remain untouched to preserve the data structure.
+PII data (e.g., Name, Email, ID) has been pseudonymized, with:
+Names replaced by user pseudonyms (e.g., User_1, User_2).
+Emails replaced with dummy email addresses (user1@example.com).
+IDs replaced with random alphanumeric tokens.
+Some non-PII columns have had their values shuffled within the column to mask data while keeping the structure clear.
