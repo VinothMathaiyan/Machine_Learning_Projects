@@ -1,6 +1,1 @@
-The first three columns in the file remain untouched to preserve the data structure.
-PII data (e.g., Name, Email, ID) has been pseudonymized, with:
-Names replaced by user pseudonyms (e.g., User_1, User_2).
-Emails replaced with dummy email addresses (user1@example.com).
-IDs replaced with random alphanumeric tokens.
-Some non-PII columns have had their values shuffled within the column to mask data while keeping the structure clear.
+
