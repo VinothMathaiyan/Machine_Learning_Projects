@@ -1,1 +1,8 @@
 
+Test Steps:
+Verify Initial Invite Completion and Metadata Capture
+Verify Reminder for Not Started Responses
+Verify Reminder for Incomplete Responses
+Verify No Reminder for Completed Responses
+Verify Metadata Capture Accuracy
+Verify No Re-entry Allowed for Completed Responses
