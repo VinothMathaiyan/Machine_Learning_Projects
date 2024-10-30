@@ -1,1 +1,22 @@
 
+import pandas as pd
+import numpy as np
+
+# Sample DataFrame
+data = {
+    'LastDay': ['2024-11-08', '2024-11-10', '', '2024-11-05', '2024-11-12', np.nan],
+    'Value': [10, 20, 15, 25, 30, 40]
+}
+
+df = pd.DataFrame(data)
+
+# Convert LastDay column to datetime, using errors='coerce' to handle blanks
+df['LastDay'] = pd.to_datetime(df['LastDay'], format='%Y-%m-%d', errors='coerce')
+
+# Define cutoff date
+cutoff_date = pd.to_datetime('2024-11-09', format='%Y-%m-%d')
+
+# Filter rows: keep rows where LastDay is <= cutoff_date or LastDay is NaT (blank)
+df_filtered = df[(df['LastDay'] <= cutoff_date) | (df['LastDay'].isna())]
+
+print(df_filtered)
