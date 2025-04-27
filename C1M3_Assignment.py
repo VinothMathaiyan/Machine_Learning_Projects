@@ -749,6 +749,50 @@ class GraphTSPMediumGraph:
         return best_tour
 
 
+# In[17]:
+
+
+def validate_adjacency_matrix(graph):
+    """
+    Validate if the input graph is a valid adjacency matrix.
+
+    Parameters:
+    - graph: The input graph to validate.
+
+    Raises:
+    - ValueError: If the graph is not a valid adjacency matrix.
+    """
+    if not isinstance(graph, list) or not all(isinstance(row, list) for row in graph):
+        raise ValueError("Input graph must be a 2D list representing an adjacency matrix.")
+    if not all(len(row) == len(graph) for row in graph):
+        raise ValueError("Input graph must be a square matrix (n x n).")
+
+# Define the adjacency matrix
+my_graph = [
+    [0, 1, 2],
+    [1, 0, 3],
+    [2, 3, 0]
+]
+
+# Validate and call the tsp_medium_graph function
+try:
+    validate_adjacency_matrix(my_graph)
+    result = tsp_medium_graph(my_graph)  # Replace tsp_medium_graph with your actual function
+    print(f"Result: {result}")
+except ValueError as e:
+    print(f"Validation Error: {e}")
+
+
+# In[ ]:
+
+
+try:
+    validate_adjacency_matrix(my_graph)
+    result = tsp_medium_graph(my_graph)
+except ValueError as e:
+    print(f"Validation Error: {e}")
+
+
 # <a id='4-4'></a>
 # ### 4.4 Test Exercise 4 (`tsp_medium_graph`)
 # 
