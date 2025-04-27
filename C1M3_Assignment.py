@@ -477,6 +477,8 @@ unittests.test_shortest_path(GraphShortestPath)
 
 from itertools import permutations
 
+
+
 class Graph:
     def __init__(self, directed=False):
         """Initialize the Graph."""
@@ -525,26 +527,58 @@ class GraphTSPSmallGraph(Graph):
         Returns:
         A tuple containing the total distance of the tour and a list of nodes representing the tour path.
         """
+        # Ensure the graph has at most 10 nodes
         if len(self.graph) > 10:
             raise ValueError("Graph exceeds the limit of 10 nodes for this method.")
         
-        # Generate all permutations of nodes excluding the starting vertex
-        nodes = [node for node in self.graph if node != start_vertex]
-        min_distance = float('inf')
-        best_path = []
-
-        # Brute-force over all permutations using itertools.permutations
-        for perm in permutations(nodes):
-            # Construct the full tour including returning to the start
-            tour = [start_vertex] + list(perm) + [start_vertex]
-            distance = self.tour_length(tour)
-            
-            # Update the shortest path if a shorter tour is found
-            if distance < min_distance:
-                min_distance = distance
-                best_path = tour
-
-        return min_distance, best_path
+        # Get all nodes
+        nodes = list(self.graph.keys())
+        n = len(nodes)
+        start_index = nodes.index(start_vertex)
+        
+        # Initialize DP table
+        # dp[mask][i] represents the minimum cost to visit all nodes in "mask" ending at node "i"
+        dp = [[float('inf')] * n for _ in range(1 << n)]
+        dp[1 << start_index][start_index] = 0
+        
+        # Precompute edge weights for easier access
+        edge_weights = [[self._get_edge_weight(nodes[i], nodes[j]) for j in range(n)] for i in range(n)]
+        
+        # Fill DP table
+        for mask in range(1 << n):
+            for i in range(n):
+                if not (mask & (1 << i)):  # If node i is not in the current mask
+                    continue
+                for j in range(n):
+                    if mask & (1 << j):  # If node j is already in the mask
+                        continue
+                    next_mask = mask | (1 << j)
+                    dp[next_mask][j] = min(dp[next_mask][j], dp[mask][i] + edge_weights[i][j])
+        
+        # Find the minimum cost to complete the tour
+        min_cost = float('inf')
+        last_mask = (1 << n) - 1  # All nodes visited
+        last_index = start_index
+        for i in range(n):
+            if i == start_index:
+                continue
+            min_cost = min(min_cost, dp[last_mask][i] + edge_weights[i][start_index])
+        
+        # Reconstruct the path
+        path = []
+        mask = last_mask
+        current_node = start_index
+        for _ in range(n - 1, -1, -1):
+            path.append(nodes[current_node])
+            for i in range(n):
+                if mask & (1 << i) and dp[mask][current_node] == dp[mask ^ (1 << current_node)][i] + edge_weights[i][current_node]:
+                    mask ^= (1 << current_node)
+                    current_node = i
+                    break
+        path.append(start_vertex)
+        path.reverse()
+        
+        return min_cost, path
 
 
 # <a id='4-2'></a>
